@@ -111,10 +111,12 @@ export const ies = pgTable("ies", {
   iesId: serial("ies_id").primaryKey(),
   ierId: integer("ier_id").references(() => ier.ierId).notNull(),
   schoolId: integer("school_id").references(() => schoolsDivisionOffice.schoolId).notNull(),
-  performance: decimal("performance").notNull(),
-  coi: decimal("coi").notNull(), // Class Observation Instrument? Or Conflict of Interest? Assuming Score.
-  classObs: decimal("class_obs").notNull(),
-  bei: decimal("bei").notNull(), // Behavioral Event Interview
+  education: decimal("education").notNull(), // Max 10
+  training: decimal("training").notNull(), // Max 10
+  experience: decimal("experience").notNull(), // Max 10
+  performance: decimal("performance").notNull(), // Max 30
+  classObs: decimal("class_obs").notNull(), // Max 25
+  portfolioBei: decimal("portfolio_bei").notNull(), // Max 15
   actualScore: decimal("actual_score").notNull(), // Computed
 });
 
@@ -122,7 +124,10 @@ export const ies = pgTable("ies", {
 export const car = pgTable("car", {
   carId: serial("car_id").primaryKey(),
   iesId: integer("ies_id").references(() => ies.iesId).notNull(),
-  remarks: text("remarks"),
+  remarks: text("remarks"), // Nullable
+  backgroundInvestigation: text("background_investigation"), // Nullable
+  forAppointment: text("for_appointment"), // Nullable
+  statusOfAppointment: text("status_of_appointment"), // Nullable
   forBi: biEnum("for_background_investigation").notNull(),
   dateOfFinalDeliberation: timestamp("date_of_final_deliberation"),
   finalizedBy: integer("finalized_by").references(() => asds.asdsId), // Who finalized it

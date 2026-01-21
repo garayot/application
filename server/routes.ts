@@ -150,11 +150,15 @@ export async function registerRoutes(
     const ierId = Number(req.params.id);
 
     try {
-        const data = api.ies.create.input.parse(req.body);
-        // Compute actual score (Simple sum/average for now based on prompt criteria example)
-        // Prompt says: Performance, COI, Class Observation, BEI -> Actual Score
-        // Assuming equal weight or simple sum for MVP
-        const actualScore = Number(data.performance) + Number(data.coi) + Number(data.classObs) + Number(data.bei);
+        const data = req.body;
+        // Compute actual score based on manual inputs
+        const actualScore = 
+            Number(data.education || 0) + 
+            Number(data.training || 0) + 
+            Number(data.experience || 0) + 
+            Number(data.performance || 0) + 
+            Number(data.classObs || 0) + 
+            Number(data.portfolioBei || 0);
 
         const result = await storage.createIES({
             ...data,
@@ -173,11 +177,11 @@ export async function registerRoutes(
     const iesId = Number(req.params.id);
 
     try {
-        const data = api.car.create.input.parse(req.body);
+        const data = req.body;
         const result = await storage.createCAR({
             ...data,
             iesId,
-            finalizedBy: req.user!.id, // Assuming admin ID maps to ASDS/HR for now. Real world would look up ASDS profile.
+            finalizedBy: req.user!.id, 
             dateOfFinalDeliberation: new Date(),
         });
         res.status(201).json(result);

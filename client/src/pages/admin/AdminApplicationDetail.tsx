@@ -31,14 +31,19 @@ const ierFormSchema = z.object({
 
 const iesFormSchema = z.object({
   schoolId: z.number(),
-  performance: z.coerce.number().min(0).max(35),
-  coi: z.coerce.number().min(0).max(5),
-  classObs: z.coerce.number().min(0).max(35),
-  bei: z.coerce.number().min(0).max(25),
+  education: z.coerce.number().min(0).max(10),
+  training: z.coerce.number().min(0).max(10),
+  experience: z.coerce.number().min(0).max(10),
+  performance: z.coerce.number().min(0).max(30),
+  classObs: z.coerce.number().min(0).max(25),
+  portfolioBei: z.coerce.number().min(0).max(15),
 });
 
 const carFormSchema = z.object({
   remarks: z.string().optional(),
+  backgroundInvestigation: z.string().optional(),
+  forAppointment: z.string().optional(),
+  statusOfAppointment: z.string().optional(),
   forBi: z.enum(["yes", "no"]),
   finalizedBy: z.number().optional()
 });
@@ -204,10 +209,12 @@ export default function AdminApplicationDetail() {
       resolver: zodResolver(iesFormSchema),
       defaultValues: {
         schoolId: schools?.[0]?.schoolId || 0,
+        education: 0,
+        training: 0,
+        experience: 0,
         performance: 0,
-        coi: 0,
         classObs: 0,
-        bei: 0
+        portfolioBei: 0
       }
     });
 
@@ -216,10 +223,12 @@ export default function AdminApplicationDetail() {
       const payload = {
         ...data,
         schoolId: Number(data.schoolId),
+        education: Number(data.education),
+        training: Number(data.training),
+        experience: Number(data.experience),
         performance: Number(data.performance),
-        coi: Number(data.coi),
         classObs: Number(data.classObs),
-        bei: Number(data.bei),
+        portfolioBei: Number(data.portfolioBei),
       };
 
       createIES.mutate({ id: app.ier!.ierId, data: payload }, {
@@ -247,28 +256,40 @@ export default function AdminApplicationDetail() {
                     </FormControl>
                   </FormItem>
                 )} />
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                <FormField control={form.control} name="performance" render={({ field }) => (
+              <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+                <FormField control={form.control} name="education" render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Performance (35)</FormLabel>
+                    <FormLabel>Education (Max 10)</FormLabel>
                     <FormControl><Input type="number" {...field} /></FormControl>
                   </FormItem>
                 )} />
-                <FormField control={form.control} name="coi" render={({ field }) => (
+                <FormField control={form.control} name="training" render={({ field }) => (
                   <FormItem>
-                    <FormLabel>COI/Achievements (5)</FormLabel>
+                    <FormLabel>Training (Max 10)</FormLabel>
+                    <FormControl><Input type="number" {...field} /></FormControl>
+                  </FormItem>
+                )} />
+                <FormField control={form.control} name="experience" render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Experience (Max 10)</FormLabel>
+                    <FormControl><Input type="number" {...field} /></FormControl>
+                  </FormItem>
+                )} />
+                <FormField control={form.control} name="performance" render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Performance (Max 30)</FormLabel>
                     <FormControl><Input type="number" {...field} /></FormControl>
                   </FormItem>
                 )} />
                 <FormField control={form.control} name="classObs" render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Class Obs (35)</FormLabel>
+                    <FormLabel>Classroom Obs (Max 25)</FormLabel>
                     <FormControl><Input type="number" {...field} /></FormControl>
                   </FormItem>
                 )} />
-                <FormField control={form.control} name="bei" render={({ field }) => (
+                <FormField control={form.control} name="portfolioBei" render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Interview (25)</FormLabel>
+                    <FormLabel>Portfolio & BEI (Max 15)</FormLabel>
                     <FormControl><Input type="number" {...field} /></FormControl>
                   </FormItem>
                 )} />
@@ -287,6 +308,9 @@ export default function AdminApplicationDetail() {
       resolver: zodResolver(carFormSchema),
       defaultValues: {
         remarks: "Highly Recommended",
+        backgroundInvestigation: "",
+        forAppointment: "",
+        statusOfAppointment: "",
         forBi: "yes" as const,
       }
     });
@@ -308,26 +332,66 @@ export default function AdminApplicationDetail() {
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
               <div className="p-4 bg-white rounded-lg border mb-4">
-                <p className="text-sm font-bold text-slate-500 uppercase">Total Score</p>
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <p className="text-xs font-bold text-slate-500 uppercase">Applicant Code</p>
+                    <p className="text-sm font-mono">{app.applicantCode}</p>
+                  </div>
+                  <div>
+                    <p className="text-xs font-bold text-slate-500 uppercase">Applicant Name</p>
+                    <p className="text-sm font-bold">{app.applicant.name}</p>
+                  </div>
+                </div>
+                <div className="mt-4 grid grid-cols-3 gap-2 text-xs">
+                   <div>Edu: {app.ies.education}</div>
+                   <div>Tra: {app.ies.training}</div>
+                   <div>Exp: {app.ies.experience}</div>
+                   <div>Perf: {app.ies.performance}</div>
+                   <div>Obs: {app.ies.classObs}</div>
+                   <div>Bei: {app.ies.portfolioBei}</div>
+                </div>
+                <Separator className="my-2" />
+                <p className="text-sm font-bold text-slate-500 uppercase">Total IES Score</p>
                 <p className="text-3xl font-bold text-slate-900">{app.ies.actualScore}</p>
               </div>
-              <FormField control={form.control} name="forBi" render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Proceed to Background Investigation?</FormLabel>
-                  <FormControl>
-                    <select {...field} className="w-full h-10 border rounded-md px-3 bg-white">
-                      <option value="yes">Yes</option>
-                      <option value="no">No</option>
-                    </select>
-                  </FormControl>
-                </FormItem>
-              )} />
-              <FormField control={form.control} name="remarks" render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Final Remarks</FormLabel>
-                  <FormControl><Input {...field} /></FormControl>
-                </FormItem>
-              )} />
+              
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <FormField control={form.control} name="forBi" render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Proceed to Background Investigation?</FormLabel>
+                    <FormControl>
+                      <select {...field} className="w-full h-10 border rounded-md px-3 bg-white">
+                        <option value="yes">Yes</option>
+                        <option value="no">No</option>
+                      </select>
+                    </FormControl>
+                  </FormItem>
+                )} />
+                <FormField control={form.control} name="remarks" render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Remarks</FormLabel>
+                    <FormControl><Input {...field} /></FormControl>
+                  </FormItem>
+                )} />
+                <FormField control={form.control} name="backgroundInvestigation" render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Background Investigation</FormLabel>
+                    <FormControl><Input {...field} /></FormControl>
+                  </FormItem>
+                )} />
+                <FormField control={form.control} name="forAppointment" render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>For Appointment</FormLabel>
+                    <FormControl><Input {...field} /></FormControl>
+                  </FormItem>
+                )} />
+                <FormField control={form.control} name="statusOfAppointment" render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Status of Appointment</FormLabel>
+                    <FormControl><Input {...field} /></FormControl>
+                  </FormItem>
+                )} />
+              </div>
               <Button type="submit" disabled={createCAR.isPending}>Finalize Application</Button>
             </form>
           </Form>
