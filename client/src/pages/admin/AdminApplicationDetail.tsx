@@ -31,15 +31,19 @@ const ierFormSchema = z.object({
 
 const iesFormSchema = z.object({
   schoolId: z.number(),
-  performance: z.coerce.number().min(0).max(35),
-  coi: z.coerce.number().min(0).max(5),
-  classObs: z.coerce.number().min(0).max(35),
-  bei: z.coerce.number().min(0).max(25),
+  education: z.coerce.number().min(0).max(10),
+  training: z.coerce.number().min(0).max(10),
+  experience: z.coerce.number().min(0).max(10),
+  performance: z.coerce.number().min(0).max(30),
+  classObs: z.coerce.number().min(0).max(25),
+  bei: z.coerce.number().min(0).max(15),
 });
 
 const carFormSchema = z.object({
   remarks: z.string().optional(),
   forBi: z.enum(["yes", "no"]),
+  forAppointment: z.boolean().optional(),
+  statusOfAppointment: z.string().optional(),
   finalizedBy: z.number().optional()
 });
 
@@ -204,8 +208,10 @@ export default function AdminApplicationDetail() {
       resolver: zodResolver(iesFormSchema),
       defaultValues: {
         schoolId: schools?.[0]?.schoolId || 0,
+        education: 0,
+        training: 0,
+        experience: 0,
         performance: 0,
-        coi: 0,
         classObs: 0,
         bei: 0
       }
@@ -216,8 +222,10 @@ export default function AdminApplicationDetail() {
       const payload = {
         ...data,
         schoolId: Number(data.schoolId),
+        education: Number(data.education),
+        training: Number(data.training),
+        experience: Number(data.experience),
         performance: Number(data.performance),
-        coi: Number(data.coi),
         classObs: Number(data.classObs),
         bei: Number(data.bei),
       };
@@ -247,28 +255,40 @@ export default function AdminApplicationDetail() {
                     </FormControl>
                   </FormItem>
                 )} />
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                <FormField control={form.control} name="performance" render={({ field }) => (
+              <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+                <FormField control={form.control} name="education" render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Performance (35)</FormLabel>
+                    <FormLabel>Education (10)</FormLabel>
                     <FormControl><Input type="number" {...field} /></FormControl>
                   </FormItem>
                 )} />
-                <FormField control={form.control} name="coi" render={({ field }) => (
+                <FormField control={form.control} name="training" render={({ field }) => (
                   <FormItem>
-                    <FormLabel>COI/Achievements (5)</FormLabel>
+                    <FormLabel>Training (10)</FormLabel>
+                    <FormControl><Input type="number" {...field} /></FormControl>
+                  </FormItem>
+                )} />
+                <FormField control={form.control} name="experience" render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Experience (10)</FormLabel>
+                    <FormControl><Input type="number" {...field} /></FormControl>
+                  </FormItem>
+                )} />
+                <FormField control={form.control} name="performance" render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Performance (30)</FormLabel>
                     <FormControl><Input type="number" {...field} /></FormControl>
                   </FormItem>
                 )} />
                 <FormField control={form.control} name="classObs" render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Class Obs (35)</FormLabel>
+                    <FormLabel>Class Observation (25)</FormLabel>
                     <FormControl><Input type="number" {...field} /></FormControl>
                   </FormItem>
                 )} />
                 <FormField control={form.control} name="bei" render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Interview (25)</FormLabel>
+                    <FormLabel>Portfolio and BEI (15)</FormLabel>
                     <FormControl><Input type="number" {...field} /></FormControl>
                   </FormItem>
                 )} />
@@ -288,6 +308,8 @@ export default function AdminApplicationDetail() {
       defaultValues: {
         remarks: "Highly Recommended",
         forBi: "yes" as const,
+        forAppointment: false,
+        statusOfAppointment: ""
       }
     });
 
@@ -311,15 +333,38 @@ export default function AdminApplicationDetail() {
                 <p className="text-sm font-bold text-slate-500 uppercase">Total Score</p>
                 <p className="text-3xl font-bold text-slate-900">{app.ies.actualScore}</p>
               </div>
-              <FormField control={form.control} name="forBi" render={({ field }) => (
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <FormField control={form.control} name="forBi" render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Proceed to Background Investigation?</FormLabel>
+                    <FormControl>
+                      <select {...field} className="w-full h-10 border rounded-md px-3 bg-white">
+                        <option value="yes">Yes</option>
+                        <option value="no">No</option>
+                      </select>
+                    </FormControl>
+                  </FormItem>
+                )} />
+                <FormField control={form.control} name="forAppointment" render={({ field }) => (
+                  <FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4 bg-white">
+                    <FormControl>
+                      <input 
+                        type="checkbox" 
+                        checked={field.value} 
+                        onChange={field.onChange} 
+                        className="h-4 w-4 rounded border-gray-300 text-purple-600 focus:ring-purple-600"
+                      />
+                    </FormControl>
+                    <div className="space-y-1 leading-none">
+                      <FormLabel>For Appointment</FormLabel>
+                    </div>
+                  </FormItem>
+                )} />
+              </div>
+              <FormField control={form.control} name="statusOfAppointment" render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Proceed to Background Investigation?</FormLabel>
-                  <FormControl>
-                    <select {...field} className="w-full h-10 border rounded-md px-3 bg-white">
-                      <option value="yes">Yes</option>
-                      <option value="no">No</option>
-                    </select>
-                  </FormControl>
+                  <FormLabel>Status of Appointment</FormLabel>
+                  <FormControl><Input {...field} placeholder="e.g., Pending, Approved" /></FormControl>
                 </FormItem>
               )} />
               <FormField control={form.control} name="remarks" render={({ field }) => (

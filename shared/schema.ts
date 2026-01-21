@@ -111,8 +111,10 @@ export const ies = pgTable("ies", {
   iesId: serial("ies_id").primaryKey(),
   ierId: integer("ier_id").references(() => ier.ierId).notNull(),
   schoolId: integer("school_id").references(() => schoolsDivisionOffice.schoolId).notNull(),
+  education: decimal("education").notNull().default("0"),
+  training: decimal("training").notNull().default("0"),
+  experience: decimal("experience").notNull().default("0"),
   performance: decimal("performance").notNull(),
-  coi: decimal("coi").notNull(), // Class Observation Instrument? Or Conflict of Interest? Assuming Score.
   classObs: decimal("class_obs").notNull(),
   bei: decimal("bei").notNull(), // Behavioral Event Interview
   actualScore: decimal("actual_score").notNull(), // Computed
@@ -124,6 +126,8 @@ export const car = pgTable("car", {
   iesId: integer("ies_id").references(() => ies.iesId).notNull(),
   remarks: text("remarks"),
   forBi: biEnum("for_background_investigation").notNull(),
+  forAppointment: boolean("for_appointment"),
+  statusOfAppointment: text("status_of_appointment"),
   dateOfFinalDeliberation: timestamp("date_of_final_deliberation"),
   finalizedBy: integer("finalized_by").references(() => asds.asdsId), // Who finalized it
 });
