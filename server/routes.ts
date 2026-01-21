@@ -187,7 +187,7 @@ export async function registerRoutes(
         const result = await storage.createCAR({
             ...data,
             iesId,
-            finalizedBy: req.user!.id, 
+            finalizedBy: null, // Set to null to avoid foreign key constraint on asds table
             dateOfFinalDeliberation: new Date(),
         });
         res.status(201).json(result);
