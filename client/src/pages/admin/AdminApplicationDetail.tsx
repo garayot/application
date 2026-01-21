@@ -343,16 +343,16 @@ export default function AdminApplicationDetail() {
                   </div>
                 </div>
                 <div className="mt-4 grid grid-cols-3 gap-2 text-xs">
-                   <div>Edu: {app.ies.education}</div>
-                   <div>Tra: {app.ies.training}</div>
-                   <div>Exp: {app.ies.experience}</div>
-                   <div>Perf: {app.ies.performance}</div>
-                   <div>Obs: {app.ies.classObs}</div>
-                   <div>Bei: {app.ies.portfolioBei}</div>
+                   <div>Edu: {app.ies?.education}</div>
+                   <div>Tra: {app.ies?.training}</div>
+                   <div>Exp: {app.ies?.experience}</div>
+                   <div>Perf: {app.ies?.performance}</div>
+                   <div>Obs: {app.ies?.classObs}</div>
+                   <div>Bei: {app.ies?.portfolioBei}</div>
                 </div>
                 <Separator className="my-2" />
                 <p className="text-sm font-bold text-slate-500 uppercase">Total IES Score</p>
-                <p className="text-3xl font-bold text-slate-900">{app.ies.actualScore}</p>
+                <p className="text-3xl font-bold text-slate-900">{app.ies?.actualScore}</p>
               </div>
               
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
