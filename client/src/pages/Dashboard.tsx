@@ -92,7 +92,7 @@ export default function Dashboard() {
                       <p className="text-xs text-slate-400 mb-1">Status</p>
                       <StatusBadge status={app.status} />
                     </div>
-                    <Link href={`/application/${app.appCodeId}`} className="w-8 h-8 rounded-full border border-slate-200 flex items-center justify-center text-slate-400 hover:text-primary hover:border-primary transition-colors">
+                    <Link href={`/application/${app.appCodeId}`} className="w-8 h-8 rounded-full border border-slate-200 flex items-center justify-center text-slate-400 hover:text-primary hover:border-primary transition-colors" data-testid={`link-view-app-${app.appCodeId}`}>
                       <ArrowRight className="w-4 h-4" />
                     </Link>
                   </div>

@@ -11,6 +11,7 @@ import Home from "@/pages/Home";
 import Dashboard from "@/pages/Dashboard";
 import Profile from "@/pages/Profile";
 import Apply from "@/pages/Apply";
+import ApplicationDetail from "@/pages/ApplicationDetail";
 import AdminDashboard from "@/pages/admin/AdminDashboard";
 import AdminApplicationDetail from "@/pages/admin/AdminApplicationDetail";
 
@@ -58,6 +59,9 @@ function Router() {
       </Route>
       <Route path="/apply">
         <ProtectedRoute component={Apply} />
+      </Route>
+      <Route path="/application/:id">
+        <ProtectedRoute component={ApplicationDetail} />
       </Route>
       <Route path="/my-applications">
         <ProtectedRoute component={Dashboard} />{" "}
