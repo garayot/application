@@ -40,7 +40,7 @@ export function Sidebar() {
   const links = isAdmin ? adminLinks : applicantLinks;
 
   return (
-    <div className="h-screen w-64 bg-white border-r border-slate-200 flex flex-col fixed left-0 top-0 z-50 shadow-sm">
+    <div className="h-screen w-64 bg-white border-r border-slate-200 flex flex-col fixed left-0 top-0 z-50 shadow-sm print:hidden">
       <div className="p-6 border-b border-slate-100">
         <div className="flex items-center gap-3">
           <div className="w-10 h-10 rounded-xl bg-primary flex items-center justify-center text-white font-bold text-xl shadow-lg shadow-primary/30">
@@ -98,9 +98,9 @@ export function Sidebar() {
 
 export function Layout({ children }: { children: React.ReactNode }) {
   return (
-    <div className="min-h-screen bg-slate-50 pl-64">
+    <div className="min-h-screen bg-slate-50 pl-64 print:pl-0">
       <Sidebar />
-      <main className="p-8 max-w-7xl mx-auto animate-in fade-in duration-500">
+      <main className="p-8 max-w-7xl mx-auto animate-in fade-in duration-500 print:p-0 print:animate-none">
         {children}
       </main>
     </div>
