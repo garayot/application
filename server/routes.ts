@@ -150,15 +150,11 @@ export async function registerRoutes(
     const ierId = Number(req.params.id);
 
     try {
-        const data = req.body;
-        // Education (10), Training (10), Experience (10), Performance (30), ClassObs (25), BEI (15)
-        const actualScore = 
-            Number(data.education || 0) + 
-            Number(data.training || 0) + 
-            Number(data.experience || 0) + 
-            Number(data.performance || 0) + 
-            Number(data.classObs || 0) + 
-            Number(data.bei || 0);
+        const data = api.ies.create.input.parse(req.body);
+        // Compute actual score (Simple sum/average for now based on prompt criteria example)
+        // Prompt says: Performance, COI, Class Observation, BEI -> Actual Score
+        // Assuming equal weight or simple sum for MVP
+        const actualScore = Number(data.performance) + Number(data.coi) + Number(data.classObs) + Number(data.bei);
 
         const result = await storage.createIES({
             ...data,
@@ -167,7 +163,6 @@ export async function registerRoutes(
         });
         res.status(201).json(result);
     } catch (e) {
-        console.error(e);
         res.status(400).json({ message: "Validation failed" });
     }
   });
