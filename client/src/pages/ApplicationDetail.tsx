@@ -4,12 +4,17 @@ import { useRoute } from "wouter";
 import { StatusBadge } from "@/components/ui/StatusBadge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
-import { CheckCircle2, AlertCircle } from "lucide-react";
+import { CheckCircle2, AlertCircle, Clock, Printer } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 export default function ApplicationDetail() {
   const [, params] = useRoute("/application/:id");
   const id = Number(params?.id);
   const { data: app, isLoading } = useApplication(id);
+
+  const handlePrint = () => {
+    window.print();
+  };
 
   if (isLoading) return <Layout><div className="p-8 text-center">Loading application...</div></Layout>;
   if (!app) return <Layout><div className="p-8 text-center">Application not found.</div></Layout>;
@@ -17,8 +22,22 @@ export default function ApplicationDetail() {
   return (
     <Layout>
       <div className="max-w-5xl mx-auto pb-20">
+        {/* Print Only Header */}
+        <div className="hidden print:block mb-8 border-b-2 border-slate-900 pb-4">
+          <h1 className="text-2xl font-bold uppercase text-center">Comparative Assessment Result (CAR)</h1>
+          <div className="grid grid-cols-2 gap-4 mt-6">
+            <div>
+              <p className="text-sm font-bold">Position: <span className="font-normal">{app.position.position}</span></p>
+              <p className="text-sm font-bold">School Assigned: <span className="font-normal">{(app.ies as any)?.schoolName || "N/A"}</span></p>
+            </div>
+            <div className="text-right">
+              <p className="text-sm font-bold">Date of Deliberation: <span className="font-normal">{app.car?.dateOfFinalDeliberation ? new Date(app.car.dateOfFinalDeliberation).toLocaleDateString() : "N/A"}</span></p>
+            </div>
+          </div>
+        </div>
+
         {/* Header */}
-        <div className="flex justify-between items-start mb-8">
+        <div className="flex justify-between items-start mb-8 print:hidden">
           <div>
             <div className="flex items-center gap-3 mb-2">
               <StatusBadge status={app.status} className="text-sm px-3 py-1" />
@@ -27,111 +46,159 @@ export default function ApplicationDetail() {
             <h1 className="text-3xl font-display font-bold text-slate-900">{app.position.position}</h1>
             <p className="text-slate-500 text-lg">Application Progress</p>
           </div>
+          {app.car && (
+            <Button onClick={handlePrint} className="flex items-center gap-2">
+              <Printer className="w-4 h-4" />
+              Print CAR
+            </Button>
+          )}
         </div>
 
         <div className="space-y-8">
-          {/* IER Results */}
-          <section>
-            <h2 className="text-xl font-bold text-slate-900 mb-4 flex items-center gap-2">
-              Step 1: Initial Evaluation (IER)
-              {app.ier ? <CheckCircle2 className="w-5 h-5 text-green-500" /> : <Clock className="w-5 h-5 text-slate-300" />}
-            </h2>
-            {app.ier ? (
-              <Card className="bg-white border-slate-200 shadow-sm">
-                <CardHeader><CardTitle className="text-lg">Evaluation Result</CardTitle></CardHeader>
-                <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div>
-                    <p className="text-xs text-slate-400 uppercase font-bold">Eligibility</p>
-                    <p className="font-medium">{app.ier.eligibility}</p>
-                  </div>
-                  <div>
-                    <p className="text-xs text-slate-400 uppercase font-bold">Result</p>
-                    <p className="font-bold capitalize">{app.ier.remarks}</p>
-                  </div>
-                  {app.ier.feedback && (
-                    <div className="md:col-span-2">
-                      <p className="text-xs text-slate-400 uppercase font-bold">Feedback</p>
-                      <p className="text-slate-600 italic">"{app.ier.feedback}"</p>
-                    </div>
-                  )}
-                </CardContent>
-              </Card>
-            ) : (
-              <div className="p-8 bg-slate-50 rounded-2xl border border-dashed border-slate-200 text-center text-slate-400">
-                Evaluation in progress...
-              </div>
-            )}
-          </section>
+          {/* Print Only Table */}
+          <div className="hidden print:block">
+            <table className="w-full border-collapse border border-slate-900 text-xs">
+              <thead>
+                <tr className="bg-slate-100">
+                  <th className="border border-slate-900 p-2 text-left">Applicant Code</th>
+                  <th className="border border-slate-900 p-2 text-left">Applicant Name</th>
+                  <th className="border border-slate-900 p-2 text-center">Edu (10)</th>
+                  <th className="border border-slate-900 p-2 text-center">Tra (10)</th>
+                  <th className="border border-slate-900 p-2 text-center">Exp (10)</th>
+                  <th className="border border-slate-900 p-2 text-center">Perf (30)</th>
+                  <th className="border border-slate-900 p-2 text-center">Obs (25)</th>
+                  <th className="border border-slate-900 p-2 text-center">Bei (15)</th>
+                  <th className="border border-slate-900 p-2 text-center">Total</th>
+                  <th className="border border-slate-900 p-2 text-left">Remarks</th>
+                  <th className="border border-slate-900 p-2 text-left">For BI</th>
+                  <th className="border border-slate-900 p-2 text-left">Appointment</th>
+                  <th className="border border-slate-900 p-2 text-left">Status of Appt</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td className="border border-slate-900 p-2">{app.applicantCode}</td>
+                  <td className="border border-slate-900 p-2 font-bold">{app.applicant.name}</td>
+                  <td className="border border-slate-900 p-2 text-center">{app.ies?.education}</td>
+                  <td className="border border-slate-900 p-2 text-center">{app.ies?.training}</td>
+                  <td className="border border-slate-900 p-2 text-center">{app.ies?.experience}</td>
+                  <td className="border border-slate-900 p-2 text-center">{app.ies?.performance}</td>
+                  <td className="border border-slate-900 p-2 text-center">{app.ies?.classObs}</td>
+                  <td className="border border-slate-900 p-2 text-center">{app.ies?.portfolioBei}</td>
+                  <td className="border border-slate-900 p-2 text-center font-bold">{app.ies?.actualScore}</td>
+                  <td className="border border-slate-900 p-2">{app.car?.remarks || "N/A"}</td>
+                  <td className="border border-slate-900 p-2 capitalize">{app.car?.forBi}</td>
+                  <td className="border border-slate-900 p-2">{app.car?.forAppointment || "N/A"}</td>
+                  <td className="border border-slate-900 p-2">{app.car?.statusOfAppointment || "N/A"}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
 
-          {/* IES Results */}
-          {app.ier?.remarks === 'qualified' && (
+          <div className="print:hidden space-y-8">
+            {/* IER Results */}
             <section>
               <h2 className="text-xl font-bold text-slate-900 mb-4 flex items-center gap-2">
-                Step 2: Assessment Scoring (IES)
-                {app.ies ? <CheckCircle2 className="w-5 h-5 text-green-500" /> : <Clock className="w-5 h-5 text-slate-300" />}
+                Step 1: Initial Evaluation (IER)
+                {app.ier ? <CheckCircle2 className="w-5 h-5 text-green-500" /> : <Clock className="w-5 h-5 text-slate-300" />}
               </h2>
-              {app.ies ? (
+              {app.ier ? (
                 <Card className="bg-white border-slate-200 shadow-sm">
-                  <CardHeader><CardTitle className="text-lg">Score Breakdown</CardTitle></CardHeader>
-                  <CardContent>
-                    <div className="grid grid-cols-2 md:grid-cols-3 gap-6 mb-6">
-                      <ScoreItem label="Education" score={app.ies.education} max={10} />
-                      <ScoreItem label="Training" score={app.ies.training} max={10} />
-                      <ScoreItem label="Experience" score={app.ies.experience} max={10} />
-                      <ScoreItem label="Performance" score={app.ies.performance} max={30} />
-                      <ScoreItem label="Classroom Observation" score={app.ies.classObs} max={25} />
-                      <ScoreItem label="Portfolio & BEI" score={app.ies.portfolioBei} max={15} />
+                  <CardHeader><CardTitle className="text-lg">Evaluation Result</CardTitle></CardHeader>
+                  <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <p className="text-xs text-slate-400 uppercase font-bold">Eligibility</p>
+                      <p className="font-medium">{app.ier.eligibility}</p>
                     </div>
-                    <Separator className="my-4" />
-                    <div className="flex justify-between items-center">
-                      <p className="font-bold text-slate-500 uppercase">Total Actual Score</p>
-                      <p className="text-3xl font-bold text-primary">{app.ies.actualScore}</p>
+                    <div>
+                      <p className="text-xs text-slate-400 uppercase font-bold">Result</p>
+                      <p className="font-bold capitalize">{app.ier.remarks}</p>
                     </div>
-                  </CardContent>
-                </Card>
-              ) : (
-                <div className="p-8 bg-slate-50 rounded-2xl border border-dashed border-slate-200 text-center text-slate-400">
-                  Assessment scoring pending...
-                </div>
-              )}
-            </section>
-          )}
-
-          {/* CAR Results */}
-          {app.ies && (
-            <section>
-              <h2 className="text-xl font-bold text-slate-900 mb-4 flex items-center gap-2">
-                Step 3: Final Deliberation (CAR)
-                {app.car ? <CheckCircle2 className="w-5 h-5 text-green-500" /> : <Clock className="w-5 h-5 text-slate-300" />}
-              </h2>
-              {app.car ? (
-                <Card className="bg-white border-slate-200 shadow-sm overflow-hidden">
-                  <div className="bg-primary/5 p-4 border-b border-primary/10 flex items-center gap-3">
-                    <AlertCircle className="w-5 h-5 text-primary" />
-                    <p className="text-sm font-semibold text-primary">Your application has been finalized.</p>
-                  </div>
-                  <CardContent className="p-6 grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div className="md:col-span-2">
-                      <p className="text-xs text-slate-400 uppercase font-bold">Final Status</p>
-                      <div className="flex items-center gap-2 mt-1">
-                        <StatusBadge status={app.status} className="text-sm px-3 py-1" />
-                        <span className="text-slate-500 text-sm">| Result: {app.car.remarks || "No remarks"}</span>
+                    {app.ier.feedback && (
+                      <div className="md:col-span-2">
+                        <p className="text-xs text-slate-400 uppercase font-bold">Feedback</p>
+                        <p className="text-slate-600 italic">"{app.ier.feedback}"</p>
                       </div>
-                    </div>
-                    <DataField label="Background Investigation" value={app.car.backgroundInvestigation} />
-                    <DataField label="Proceed to BI" value={app.car.forBi === 'yes' ? "Yes" : "No"} />
-                    <DataField label="For Appointment" value={app.car.forAppointment} />
-                    <DataField label="Status of Appointment" value={app.car.statusOfAppointment} />
-                    <DataField label="Finalized Date" value={app.car.dateOfFinalDeliberation ? new Date(app.car.dateOfFinalDeliberation).toLocaleDateString() : null} />
+                    )}
                   </CardContent>
                 </Card>
               ) : (
                 <div className="p-8 bg-slate-50 rounded-2xl border border-dashed border-slate-200 text-center text-slate-400">
-                  Waiting for final deliberation...
+                  Evaluation in progress...
                 </div>
               )}
             </section>
-          )}
+
+            {/* IES Results */}
+            {app.ier?.remarks === 'qualified' && (
+              <section>
+                <h2 className="text-xl font-bold text-slate-900 mb-4 flex items-center gap-2">
+                  Step 2: Assessment Scoring (IES)
+                  {app.ies ? <CheckCircle2 className="w-5 h-5 text-green-500" /> : <Clock className="w-5 h-5 text-slate-300" />}
+                </h2>
+                {app.ies ? (
+                  <Card className="bg-white border-slate-200 shadow-sm">
+                    <CardHeader><CardTitle className="text-lg">Score Breakdown</CardTitle></CardHeader>
+                    <CardContent>
+                      <div className="grid grid-cols-2 md:grid-cols-3 gap-6 mb-6">
+                        <ScoreItem label="Education" score={app.ies.education} max={10} />
+                        <ScoreItem label="Training" score={app.ies.training} max={10} />
+                        <ScoreItem label="Experience" score={app.ies.experience} max={10} />
+                        <ScoreItem label="Performance" score={app.ies.performance} max={30} />
+                        <ScoreItem label="Classroom Observation" score={app.ies.classObs} max={25} />
+                        <ScoreItem label="Portfolio & BEI" score={app.ies.portfolioBei} max={15} />
+                      </div>
+                      <Separator className="my-4" />
+                      <div className="flex justify-between items-center">
+                        <p className="font-bold text-slate-500 uppercase">Total Actual Score</p>
+                        <p className="text-3xl font-bold text-primary">{app.ies.actualScore}</p>
+                      </div>
+                    </CardContent>
+                  </Card>
+                ) : (
+                  <div className="p-8 bg-slate-50 rounded-2xl border border-dashed border-slate-200 text-center text-slate-400">
+                    Assessment scoring pending...
+                  </div>
+                )}
+              </section>
+            )}
+
+            {/* CAR Results */}
+            {app.ies && (
+              <section>
+                <h2 className="text-xl font-bold text-slate-900 mb-4 flex items-center gap-2">
+                  Step 3: Final Deliberation (CAR)
+                  {app.car ? <CheckCircle2 className="w-5 h-5 text-green-500" /> : <Clock className="w-5 h-5 text-slate-300" />}
+                </h2>
+                {app.car ? (
+                  <Card className="bg-white border-slate-200 shadow-sm overflow-hidden">
+                    <div className="bg-primary/5 p-4 border-b border-primary/10 flex items-center gap-3">
+                      <AlertCircle className="w-5 h-5 text-primary" />
+                      <p className="text-sm font-semibold text-primary">Your application has been finalized.</p>
+                    </div>
+                    <CardContent className="p-6 grid grid-cols-1 md:grid-cols-2 gap-6">
+                      <div className="md:col-span-2">
+                        <p className="text-xs text-slate-400 uppercase font-bold">Final Status</p>
+                        <div className="flex items-center gap-2 mt-1">
+                          <StatusBadge status={app.status} className="text-sm px-3 py-1" />
+                          <span className="text-slate-500 text-sm">| Result: {app.car.remarks || "No remarks"}</span>
+                        </div>
+                      </div>
+                      <DataField label="Background Investigation" value={app.car.backgroundInvestigation} />
+                      <DataField label="Proceed to BI" value={app.car.forBi === 'yes' ? "Yes" : "No"} />
+                      <DataField label="For Appointment" value={app.car.forAppointment} />
+                      <DataField label="Status of Appointment" value={app.car.statusOfAppointment} />
+                      <DataField label="Finalized Date" value={app.car.dateOfFinalDeliberation ? new Date(app.car.dateOfFinalDeliberation).toLocaleDateString() : null} />
+                    </CardContent>
+                  </Card>
+                ) : (
+                  <div className="p-8 bg-slate-50 rounded-2xl border border-dashed border-slate-200 text-center text-slate-400">
+                    Waiting for final deliberation...
+                  </div>
+                )}
+              </section>
+            )}
+          </div>
         </div>
       </div>
     </Layout>
@@ -159,4 +226,3 @@ function DataField({ label, value }: { label: string, value: any }) {
   );
 }
 
-import { Clock } from "lucide-react";

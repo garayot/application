@@ -418,23 +418,73 @@ export default function AdminApplicationDetail() {
             <h1 className="text-3xl font-display font-bold text-slate-900">{app.applicant.name}</h1>
             <p className="text-slate-500 text-lg">{app.position.position}</p>
           </div>
-          <div className="text-right text-sm text-slate-500">
+          <div className="text-right text-sm text-slate-500 flex flex-col items-end gap-2">
             <p>Applied on {new Date(app.createdAt!).toLocaleDateString()}</p>
+            {app.car && (
+              <Button size="sm" variant="outline" onClick={() => window.print()} className="flex items-center gap-2">
+                <Printer className="w-4 h-4" />
+                Print CAR
+              </Button>
+            )}
           </div>
         </div>
 
-        {/* Applicant Details Grid */}
-        <div className="bg-white p-6 rounded-2xl border border-slate-200 mb-8 grid grid-cols-1 md:grid-cols-2 gap-y-4 gap-x-8">
-           <div><p className="text-xs text-slate-400 uppercase font-bold">Email</p><p>{app.applicant.email}</p></div>
-           <div><p className="text-xs text-slate-400 uppercase font-bold">Contact</p><p>{app.applicant.contact}</p></div>
-           <div><p className="text-xs text-slate-400 uppercase font-bold">Education</p><p>{app.applicant.education}</p></div>
-           <div><p className="text-xs text-slate-400 uppercase font-bold">Eligibility</p><p>{app.applicant.eligibility}</p></div>
-           <div><p className="text-xs text-slate-400 uppercase font-bold">Experience</p><p>{app.applicant.experience} months</p></div>
-           <div><p className="text-xs text-slate-400 uppercase font-bold">Training</p><p>{app.applicant.training} hours</p></div>
+        {/* Print Only Header */}
+        <div className="hidden print:block mb-8 border-b-2 border-slate-900 pb-4">
+          <h1 className="text-2xl font-bold uppercase text-center">Comparative Assessment Result (CAR)</h1>
+          <div className="grid grid-cols-2 gap-4 mt-6">
+            <div>
+              <p className="text-sm font-bold">Position: <span className="font-normal">{app.position.position}</span></p>
+              <p className="text-sm font-bold">School Assigned: <span className="font-normal">{(app.ies as any)?.schoolName || "N/A"}</span></p>
+            </div>
+            <div className="text-right">
+              <p className="text-sm font-bold">Date of Deliberation: <span className="font-normal">{app.car?.dateOfFinalDeliberation ? new Date(app.car.dateOfFinalDeliberation).toLocaleDateString() : "N/A"}</span></p>
+            </div>
+          </div>
+        </div>
+
+        {/* Print Only Table */}
+        <div className="hidden print:block mb-8">
+          <table className="w-full border-collapse border border-slate-900 text-[10px]">
+            <thead>
+              <tr className="bg-slate-100">
+                <th className="border border-slate-900 p-1 text-left">Code</th>
+                <th className="border border-slate-900 p-1 text-left">Name</th>
+                <th className="border border-slate-900 p-1 text-center">Edu</th>
+                <th className="border border-slate-900 p-1 text-center">Tra</th>
+                <th className="border border-slate-900 p-1 text-center">Exp</th>
+                <th className="border border-slate-900 p-1 text-center">Perf</th>
+                <th className="border border-slate-900 p-1 text-center">Obs</th>
+                <th className="border border-slate-900 p-1 text-center">Bei</th>
+                <th className="border border-slate-900 p-1 text-center">Total</th>
+                <th className="border border-slate-900 p-1 text-left">Remarks</th>
+                <th className="border border-slate-900 p-1 text-left">BI</th>
+                <th className="border border-slate-900 p-1 text-left">Appt</th>
+                <th className="border border-slate-900 p-1 text-left">Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td className="border border-slate-900 p-1 font-mono">{app.applicantCode}</td>
+                <td className="border border-slate-900 p-1 font-bold">{app.applicant.name}</td>
+                <td className="border border-slate-900 p-1 text-center">{app.ies?.education}</td>
+                <td className="border border-slate-900 p-1 text-center">{app.ies?.training}</td>
+                <td className="border border-slate-900 p-1 text-center">{app.ies?.experience}</td>
+                <td className="border border-slate-900 p-1 text-center">{app.ies?.performance}</td>
+                <td className="border border-slate-900 p-1 text-center">{app.ies?.classObs}</td>
+                <td className="border border-slate-900 p-1 text-center">{app.ies?.portfolioBei}</td>
+                <td className="border border-slate-900 p-1 text-center font-bold">{app.ies?.actualScore}</td>
+                <td className="border border-slate-900 p-1">{app.car?.remarks || "N/A"}</td>
+                <td className="border border-slate-900 p-1 capitalize">{app.car?.forBi}</td>
+                <td className="border border-slate-900 p-1">{app.car?.forAppointment || "N/A"}</td>
+                <td className="border border-slate-900 p-1">{app.car?.statusOfAppointment || "N/A"}</td>
+              </tr>
+            </tbody>
+          </table>
         </div>
 
         {/* Evaluation Flow */}
-        <div className="space-y-8">
+        <div className="space-y-8 print:hidden">
           <IERSection />
           <IESSection />
           <CARSection />
@@ -466,4 +516,5 @@ function CompletedSection({ title, data }: { title: string, data: any }) {
   );
 }
 
-import { CheckCircle2 } from "lucide-react";
+import { CheckCircle2, Printer } from "lucide-react";
+

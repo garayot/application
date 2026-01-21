@@ -168,9 +168,13 @@ export class DatabaseStorage implements IStorage {
 
     if (ierData) {
       const [foundIes] = await db.select().from(ies).where(eq(ies.ierId, ierData.ierId));
-      iesData = foundIes;
-      if (iesData) {
-        const [foundCar] = await db.select().from(car).where(eq(car.iesId, iesData.iesId));
+      if (foundIes) {
+        const [school] = await db.select().from(schoolsDivisionOffice).where(eq(schoolsDivisionOffice.schoolId, foundIes.schoolId));
+        iesData = {
+          ...foundIes,
+          schoolName: school?.name
+        };
+        const [foundCar] = await db.select().from(car).where(eq(car.iesId, foundIes.iesId));
         carData = foundCar;
       }
     }

@@ -176,6 +176,15 @@ export const insertIerSchema = createInsertSchema(ier).omit({ ierId: true });
 export const insertIesSchema = createInsertSchema(ies).omit({ iesId: true, actualScore: true }); // Actual score computed server-side
 export const insertCarSchema = createInsertSchema(car).omit({ carId: true });
 
+export type InsertUser = typeof users.$inferInsert;
+export type InsertApplicant = typeof applicants.$inferInsert;
+export type InsertPosition = typeof positions.$inferInsert;
+export type InsertSchool = typeof schoolsDivisionOffice.$inferInsert;
+export type InsertApplicationCode = typeof applicationCodes.$inferInsert;
+export type InsertIER = typeof ier.$inferInsert;
+export type InsertIES = typeof ies.$inferInsert;
+export type InsertCAR = typeof car.$inferInsert;
+
 // Types
 export type User = typeof users.$inferSelect;
 export type Applicant = typeof applicants.$inferSelect;
