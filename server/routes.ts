@@ -105,17 +105,41 @@ export async function registerRoutes(
     const appCodeId = Number(req.params.id);
 
     try {
-      const data = api.ier.create.input.parse(req.body);
+      const data = req.body; // Use raw body for calculation logic
       const app = await storage.getApplicationById(appCodeId);
       if (!app) return res.sendStatus(404);
+
+      // Calculation logic
+      const stdEdu = Number(data.standardEducation || 0);
+      const stdTra = Number(data.standardTraining || 0);
+      const stdExp = Number(data.standardExperience || 0);
+      
+      const appEdu = Number(data.applicantEducation || 0);
+      const appTra = Number(data.applicantTraining || 0);
+      const appExp = Number(data.applicantExperience || 0);
+
+      const incEdu = appEdu - stdEdu;
+      const incTra = appTra - stdTra;
+      const incExp = appExp - stdExp;
+
+      // Disqualification logic: if Education increment is negative
+      let remarks = data.remarks || 'qualified';
+      if (incEdu < 0) {
+        remarks = 'disqualified';
+      }
 
       const result = await storage.createIER({
         ...data,
         appCodeId: appCodeId,
         positionId: app.positionId,
+        remarks: remarks,
+        incrementEducation: incEdu,
+        incrementTraining: incTra,
+        incrementExperience: incExp,
       });
       res.status(201).json(result);
     } catch (e) {
+      console.error(e);
       res.status(400).json({ message: "Validation failed" });
     }
   });

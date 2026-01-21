@@ -19,7 +19,14 @@ const ierFormSchema = z.object({
   eligibility: z.string().min(1, "Required"),
   remarks: z.enum(["qualified", "disqualified"]),
   feedback: z.string().optional(),
-  positionId: z.number()
+  positionId: z.number(),
+  // Qualification Levels (1-31)
+  standardEducation: z.coerce.number().min(0).max(31),
+  standardTraining: z.coerce.number().min(0).max(31),
+  standardExperience: z.coerce.number().min(0).max(31),
+  applicantEducation: z.coerce.number().min(0).max(31),
+  applicantTraining: z.coerce.number().min(0).max(31),
+  applicantExperience: z.coerce.number().min(0).max(31),
 });
 
 const iesFormSchema = z.object({
@@ -56,9 +63,26 @@ export default function AdminApplicationDetail() {
         eligibility: app.applicant.eligibility || "Eligible",
         remarks: "qualified" as const,
         feedback: "",
-        positionId: app.positionId
+        positionId: app.positionId,
+        standardEducation: 0,
+        standardTraining: 0,
+        standardExperience: 0,
+        applicantEducation: 0,
+        applicantTraining: 0,
+        applicantExperience: 0,
       }
     });
+
+    const standardEducation = form.watch("standardEducation");
+    const standardTraining = form.watch("standardTraining");
+    const standardExperience = form.watch("standardExperience");
+    const applicantEducation = form.watch("applicantEducation");
+    const applicantTraining = form.watch("applicantTraining");
+    const applicantExperience = form.watch("applicantExperience");
+
+    const incEdu = applicantEducation - standardEducation;
+    const incTra = applicantTraining - standardTraining;
+    const incExp = applicantExperience - standardExperience;
 
     const onSubmit = (data: any) => {
       createIER.mutate({ id, data }, {
@@ -74,7 +98,7 @@ export default function AdminApplicationDetail() {
         <CardHeader><CardTitle>Initial Evaluation (IER)</CardTitle></CardHeader>
         <CardContent>
           <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
               <div className="grid grid-cols-2 gap-4">
                 <FormField control={form.control} name="eligibility" render={({ field }) => (
                   <FormItem>
@@ -84,7 +108,7 @@ export default function AdminApplicationDetail() {
                 )} />
                 <FormField control={form.control} name="remarks" render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Result</FormLabel>
+                    <FormLabel>Manual Override Result</FormLabel>
                     <FormControl>
                       <select {...field} className="w-full h-10 border rounded-md px-3 bg-transparent">
                         <option value="qualified">Qualified</option>
@@ -94,13 +118,79 @@ export default function AdminApplicationDetail() {
                   </FormItem>
                 )} />
               </div>
+
+              <div className="space-y-4">
+                <h3 className="font-bold text-sm uppercase text-slate-500">Qualification Standards & Applicant Levels</h3>
+                <div className="grid grid-cols-3 gap-4 bg-slate-50 p-4 rounded-xl border">
+                  <div className="space-y-4">
+                    <p className="font-bold text-xs text-center">Education</p>
+                    <FormField control={form.control} name="standardEducation" render={({ field }) => (
+                      <FormItem>
+                        <FormLabel className="text-xs">Standard (1-31)</FormLabel>
+                        <FormControl><Input type="number" {...field} /></FormControl>
+                      </FormItem>
+                    )} />
+                    <FormField control={form.control} name="applicantEducation" render={({ field }) => (
+                      <FormItem>
+                        <FormLabel className="text-xs">Applicant (1-31)</FormLabel>
+                        <FormControl><Input type="number" {...field} /></FormControl>
+                      </FormItem>
+                    )} />
+                    <div className={`p-2 rounded text-center text-sm font-bold ${incEdu < 0 ? 'bg-red-100 text-red-700' : 'bg-green-100 text-green-700'}`}>
+                      Inc: {incEdu}
+                      {incEdu < 0 && <p className="text-[10px] mt-1">DISQUALIFIED</p>}
+                    </div>
+                  </div>
+
+                  <div className="space-y-4 border-l pl-4">
+                    <p className="font-bold text-xs text-center">Training</p>
+                    <FormField control={form.control} name="standardTraining" render={({ field }) => (
+                      <FormItem>
+                        <FormLabel className="text-xs">Standard (1-31)</FormLabel>
+                        <FormControl><Input type="number" {...field} /></FormControl>
+                      </FormItem>
+                    )} />
+                    <FormField control={form.control} name="applicantTraining" render={({ field }) => (
+                      <FormItem>
+                        <FormLabel className="text-xs">Applicant (1-31)</FormLabel>
+                        <FormControl><Input type="number" {...field} /></FormControl>
+                      </FormItem>
+                    )} />
+                    <div className="p-2 rounded bg-slate-100 text-center text-sm font-bold">
+                      Inc: {incTra}
+                    </div>
+                  </div>
+
+                  <div className="space-y-4 border-l pl-4">
+                    <p className="font-bold text-xs text-center">Experience</p>
+                    <FormField control={form.control} name="standardExperience" render={({ field }) => (
+                      <FormItem>
+                        <FormLabel className="text-xs">Standard (1-31)</FormLabel>
+                        <FormControl><Input type="number" {...field} /></FormControl>
+                      </FormItem>
+                    )} />
+                    <FormField control={form.control} name="applicantExperience" render={({ field }) => (
+                      <FormItem>
+                        <FormLabel className="text-xs">Applicant (1-31)</FormLabel>
+                        <FormControl><Input type="number" {...field} /></FormControl>
+                      </FormItem>
+                    )} />
+                    <div className="p-2 rounded bg-slate-100 text-center text-sm font-bold">
+                      Inc: {incExp}
+                    </div>
+                  </div>
+                </div>
+              </div>
+
               <FormField control={form.control} name="feedback" render={({ field }) => (
                 <FormItem>
                   <FormLabel>Feedback (Optional)</FormLabel>
                   <FormControl><Input {...field} /></FormControl>
                 </FormItem>
               )} />
-              <Button type="submit" disabled={createIER.isPending}>Submit Evaluation</Button>
+              <Button type="submit" disabled={createIER.isPending} className="w-full">
+                {incEdu < 0 ? 'Submit Disqualification' : 'Submit Evaluation'}
+              </Button>
             </form>
           </Form>
         </CardContent>

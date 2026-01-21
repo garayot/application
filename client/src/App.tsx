@@ -14,18 +14,29 @@ import Apply from "@/pages/Apply";
 import AdminDashboard from "@/pages/admin/AdminDashboard";
 import AdminApplicationDetail from "@/pages/admin/AdminApplicationDetail";
 
-function ProtectedRoute({ component: Component, adminOnly = false }: { component: React.ComponentType, adminOnly?: boolean }) {
+function ProtectedRoute({
+  component: Component,
+  adminOnly = false,
+}: {
+  component: React.ComponentType;
+  adminOnly?: boolean;
+}) {
   const { user, isLoading } = useUser();
   const [, setLocation] = useLocation();
 
-  if (isLoading) return <div className="h-screen flex items-center justify-center">Loading...</div>;
+  if (isLoading)
+    return (
+      <div className="h-screen flex items-center justify-center">
+        Loading...
+      </div>
+    );
 
   if (!user) {
     setLocation("/");
     return null;
   }
 
-  if (adminOnly && user.role !== 'admin') {
+  if (adminOnly && user.role !== "admin") {
     setLocation("/dashboard");
     return null;
   }
@@ -37,7 +48,7 @@ function Router() {
   return (
     <Switch>
       <Route path="/" component={Home} />
-      
+
       {/* Applicant Routes */}
       <Route path="/dashboard">
         <ProtectedRoute component={Dashboard} />
@@ -49,7 +60,8 @@ function Router() {
         <ProtectedRoute component={Apply} />
       </Route>
       <Route path="/my-applications">
-        <ProtectedRoute component={Dashboard} /> {/* Reusing Dashboard for now */}
+        <ProtectedRoute component={Dashboard} />{" "}
+        {/* Reusing Dashboard for now */}
       </Route>
 
       {/* Admin Routes */}
@@ -59,7 +71,7 @@ function Router() {
       <Route path="/admin/application/:id">
         <ProtectedRoute component={AdminApplicationDetail} adminOnly />
       </Route>
-      
+
       {/* Aliases for admin sidebar */}
       <Route path="/admin/applicants">
         <ProtectedRoute component={AdminDashboard} adminOnly />
@@ -67,7 +79,7 @@ function Router() {
       <Route path="/admin/evaluations">
         <ProtectedRoute component={AdminDashboard} adminOnly />
       </Route>
-      
+
       <Route component={NotFound} />
     </Switch>
   );

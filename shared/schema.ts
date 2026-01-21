@@ -93,6 +93,17 @@ export const ier = pgTable("ier", {
   eligibility: text("eligibility").notNull(), // Confirmed eligibility
   remarks: remarksEnum("remarks").notNull(), // qualified/disqualified
   feedback: text("feedback"), // Optional feedback message
+  
+  // New Qualification fields
+  standardEducation: integer("standard_education").default(0),
+  standardTraining: integer("standard_training").default(0),
+  standardExperience: integer("standard_experience").default(0),
+  applicantEducation: integer("applicant_education").default(0),
+  applicantTraining: integer("applicant_training").default(0),
+  applicantExperience: integer("applicant_experience").default(0),
+  incrementEducation: integer("increment_education").default(0),
+  incrementTraining: integer("increment_training").default(0),
+  incrementExperience: integer("increment_experience").default(0),
 });
 
 // IES (Initial Evaluation Sheet)
