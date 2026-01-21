@@ -91,7 +91,7 @@ export async function registerRoutes(
     const fullApp = await storage.getApplicationById(Number(req.params.id));
     if (!fullApp) return res.sendStatus(404);
 
-    if (req.user!.role !== "admin") {
+    if (req.user?.role !== "admin") {
       const applicant = await storage.getApplicantByUserId(req.user!.id);
       if (!applicant || applicant.appId !== fullApp.appId) return res.sendStatus(403);
     }
