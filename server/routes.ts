@@ -178,6 +178,12 @@ export async function registerRoutes(
 
     try {
         const data = req.body;
+        
+        // Ensure forBi is present as it is notNull in schema
+        if (!data.forBi) {
+            data.forBi = "yes";
+        }
+
         const result = await storage.createCAR({
             ...data,
             iesId,
@@ -186,6 +192,7 @@ export async function registerRoutes(
         });
         res.status(201).json(result);
     } catch(e) {
+        console.error("CAR creation error:", e);
         res.status(400).json({ message: "Validation failed" });
     }
   });

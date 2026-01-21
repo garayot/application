@@ -316,7 +316,12 @@ export default function AdminApplicationDetail() {
     });
 
     const onSubmit = (data: any) => {
-      createCAR.mutate({ id: app.ies!.iesId, data }, {
+      // Ensure forBi is explicitly passed
+      const payload = {
+        ...data,
+        forBi: data.forBi || "yes"
+      };
+      createCAR.mutate({ id: app.ies!.iesId, data: payload }, {
         onSuccess: () => toast({ title: "Finalized Application" }),
         onError: (err) => toast({ title: "Error", description: err.message, variant: "destructive" })
       });
