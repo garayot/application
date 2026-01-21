@@ -1,0 +1,292 @@
+Prompt:
+
+Build a full-stack web-based application to centralize and streamline the Teacher I Application Process based on the UML Activity Diagram and database schema described below.
+
+The system must strictly follow the defined workflow, user roles, and evaluation logic.
+
+🔧 Tech Stack Requirements
+
+Frontend: HTML, CSS, JavaScript (or React if supported)
+
+Backend: Node.js with Express
+
+Database: MySQL (or SQLite if MySQL is unavailable on Replit)
+
+Authentication: Session-based or JWT authentication
+
+File Uploads: Multer (for PDF/image document uploads)
+
+👥 User Roles & Access Control
+
+Implement role-based access control (RBAC) with three end users:
+
+Applicant (default role: user)
+
+HR Secretariat (default role: admin)
+
+ASDS (default role: admin)
+
+Each role must only access features relevant to their responsibilities.
+
+🧭 Application Workflow (Must Follow UML Activity Diagram)
+1️⃣ Applicant Flow
+
+Applicant registers and logs in
+
+Fills in basic personal information
+
+Uploads required documents:
+
+PDS
+
+Application Letters
+
+Certificates (training, eligibility, etc.)
+
+Applies for a specific position
+
+Upon submission:
+
+System generates a unique Applicant_Code
+
+Applicant can track application status
+
+Applicant is not allowed to edit the application once submitted
+
+Applicant receives system notifications for:
+
+Disqualification
+
+Final result
+
+2️⃣ HR Secretariat Flow
+
+View list of submitted applicants
+
+Review uploaded documents
+
+Evaluate Education, Training, and Experience (ETE)
+
+System computes Initial Evaluation Result (IER):
+
+Criteria example:
+
+Level 6 → Bachelor’s Degree holder OR at least 6 units in Master’s Degree
+
+IER Result:
+
+Qualified → Applicant proceeds to assessment stage
+
+Disqualified → Application stops and applicant is notified
+
+For qualified applicants:
+
+Conduct demo teaching
+
+Fill out Initial Evaluation Sheet (IES)
+
+Assess:
+
+Performance
+
+Accomplishments
+
+COI
+
+Class Observation
+
+BEI
+
+System computes Actual Score
+
+3️⃣ System Automation
+
+Automatically compute:
+
+IER qualification result
+
+IES actual score
+
+Generate Comparative Assessment Result (CAR) after IES completion
+
+Enforce process order (no skipping steps)
+
+4️⃣ ASDS Flow
+
+View applicants with completed CAR
+
+Perform Final Deliberation
+
+Decide:
+
+For Background Investigation → Yes / No
+
+Finalize application decision
+
+Record Date of Final Deliberation
+
+Lock records after final decision
+
+🗄️ Database Schema (Use Exactly as Defined)
+Applicant
+
+App_ID (PK)
+
+Name
+
+Address
+
+Age
+
+Sex
+
+Civil_Status
+
+Religion
+
+Disability (nullable)
+
+Ethnic_group (nullable)
+
+Email
+
+Contact
+
+Education
+
+Training (number)
+
+Experience (number)
+
+Eligibility
+
+Role (default: user)
+
+Secretariat
+
+Sec_ID (PK)
+
+Name
+
+Address
+
+Age
+
+Sex
+
+Role (default: admin)
+
+ASDS
+
+ASDS_ID (PK)
+
+Name
+
+Address
+
+Age
+
+Sex
+
+Role (default: admin)
+
+Position
+
+Position_ID (PK)
+
+Position
+
+Salary_Grade
+
+Monthly_Salary (number)
+
+SchoolsDivisionOffice
+
+School_ID (PK)
+
+Address
+
+Application_Code
+
+App_CODE_ID (PK)
+
+App_ID (FK)
+
+Position_ID (FK)
+
+IER (Initial Evaluation Result)
+
+IER_ID (PK)
+
+App_CODE_ID (FK)
+
+Position_ID (FK)
+
+Eligibility
+
+Remarks ENUM('qualified', 'disqualified')
+(Computed by system logic)
+
+IES (Initial Evaluation Sheet)
+
+IES_ID (PK)
+
+IER_ID (FK)
+
+School_ID (FK)
+
+Performance
+
+COI
+
+Class_OBS
+
+BEI
+
+Actual_Score (Computed)
+
+CAR (Comparative Assessment Result)
+
+CAR_ID (PK)
+
+IES_ID (FK)
+
+Remarks
+
+For_Background_Investigation ENUM('yes', 'no')
+
+DateOfFinalDeliberation
+
+🔐 System Rules & Constraints
+
+Enforce one-way process flow (no backward editing)
+
+Only HR can access IER & IES modules
+
+Only ASDS can finalize CAR
+
+Applicant_Code must be unique and immutable
+
+All computed fields must be calculated server-side
+
+Include basic input validation and error handling
+
+📊 Additional Features
+
+Dashboard views per role
+
+Status indicators (Submitted, Qualified, Disqualified, Under Assessment, Finalized)
+
+File preview/download for admins
+
+Clean and simple UI suitable for government use
+
+📌 Output Expectation
+
+Fully working CRUD-based web app
+
+Well-structured folders (routes, models, controllers)
+
+SQL schema initialization script
+
+Clear comments explaining workflow logic
