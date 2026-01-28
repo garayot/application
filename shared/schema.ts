@@ -65,7 +65,7 @@ export const positions = pgTable("positions", {
   positionId: serial("position_id").primaryKey(),
   position: text("position").notNull(), // e.g., "Teacher I"
   salaryGrade: integer("salary_grade").notNull(),
-  monthlySalary: decimal("monthly_salary").notNull(),
+  monthlySalary: text("monthly_salary").notNull(),
   standardEducation: integer("standard_education").default(0),
   standardTraining: integer("standard_training").default(0),
   standardExperience: integer("standard_experience").default(0),
