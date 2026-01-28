@@ -65,7 +65,7 @@ export async function registerRoutes(
       });
 
       // Create IER automatically for initial screening
-      const position = await db.select().from(positions).where(eq(positions.positionId, appCode.positionId)).then(rows => rows[0]);
+      const position = await storage.getPositionById(appCode.positionId);
       if (position) {
         const ierData = {
           appCodeId: appCode.appCodeId,
@@ -167,14 +167,7 @@ export async function registerRoutes(
     if (!req.isAuthenticated() || req.user!.role !== "admin") return res.sendStatus(403);
     try {
       const data = req.body;
-      const [result] = await db.insert(positions).values({
-        position: data.position,
-        salaryGrade: Number(data.salaryGrade),
-        monthlySalary: String(data.monthlySalary),
-        standardEducation: Number(data.standardEducation || 0),
-        standardTraining: Number(data.standardTraining || 0),
-        standardExperience: Number(data.standardExperience || 0),
-      }).returning();
+      const result = await storage.createPosition(data);
       res.status(201).json(result);
     } catch (e) {
       console.error("Position creation error:", e);
@@ -187,18 +180,7 @@ export async function registerRoutes(
     try {
       const id = Number(req.params.id);
       const data = req.body;
-      const updateData: any = {};
-      if (data.position !== undefined) updateData.position = data.position;
-      if (data.salaryGrade !== undefined) updateData.salaryGrade = Number(data.salaryGrade);
-      if (data.monthlySalary !== undefined) updateData.monthlySalary = String(data.monthlySalary);
-      if (data.standardEducation !== undefined) updateData.standardEducation = Number(data.standardEducation);
-      if (data.standardTraining !== undefined) updateData.standardTraining = Number(data.standardTraining);
-      if (data.standardExperience !== undefined) updateData.standardExperience = Number(data.standardExperience);
-
-      const [result] = await db.update(positions)
-        .set(updateData)
-        .where(eq(positions.positionId, id))
-        .returning();
+      const result = await storage.updatePosition(id, data);
       res.json(result);
     } catch (e) {
       console.error("Position update error:", e);
@@ -210,7 +192,7 @@ export async function registerRoutes(
     if (!req.isAuthenticated() || req.user!.role !== "admin") return res.sendStatus(403);
     try {
       const id = Number(req.params.id);
-      await db.delete(positions).where(eq(positions.positionId, id));
+      await storage.deletePosition(id);
       res.sendStatus(204);
     } catch (e) {
       res.status(400).json({ message: "Failed to delete position" });

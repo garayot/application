@@ -30,6 +30,10 @@ export interface IStorage {
 
   // Positions & Schools
   getPositions(): Promise<Position[]>;
+  getPositionById(positionId: number): Promise<Position | undefined>;
+  createPosition(data: any): Promise<Position>;
+  updatePosition(positionId: number, data: any): Promise<Position>;
+  deletePosition(positionId: number): Promise<void>;
   getSchools(): Promise<any[]>;
 
   // Applications
@@ -108,6 +112,43 @@ export class DatabaseStorage implements IStorage {
   // Positions & Schools
   async getPositions(): Promise<Position[]> {
     return await db.select().from(positions);
+  }
+
+  async getPositionById(positionId: number): Promise<Position | undefined> {
+    const [position] = await db.select().from(positions).where(eq(positions.positionId, positionId));
+    return position;
+  }
+
+  async createPosition(data: any): Promise<Position> {
+    const [result] = await db.insert(positions).values({
+      position: data.position,
+      salaryGrade: Number(data.salaryGrade),
+      monthlySalary: String(data.monthlySalary),
+      standardEducation: Number(data.standardEducation || 0),
+      standardTraining: Number(data.standardTraining || 0),
+      standardExperience: Number(data.standardExperience || 0),
+    }).returning();
+    return result;
+  }
+
+  async updatePosition(positionId: number, data: any): Promise<Position> {
+    const updateData: any = {};
+    if (data.position !== undefined) updateData.position = data.position;
+    if (data.salaryGrade !== undefined) updateData.salaryGrade = Number(data.salaryGrade);
+    if (data.monthlySalary !== undefined) updateData.monthlySalary = String(data.monthlySalary);
+    if (data.standardEducation !== undefined) updateData.standardEducation = Number(data.standardEducation);
+    if (data.standardTraining !== undefined) updateData.standardTraining = Number(data.standardTraining);
+    if (data.standardExperience !== undefined) updateData.standardExperience = Number(data.standardExperience);
+
+    const [result] = await db.update(positions)
+      .set(updateData)
+      .where(eq(positions.positionId, positionId))
+      .returning();
+    return result;
+  }
+
+  async deletePosition(positionId: number): Promise<void> {
+    await db.delete(positions).where(eq(positions.positionId, positionId));
   }
 
   async getSchools(): Promise<any[]> {
