@@ -130,12 +130,12 @@ export default function AdminApplicationDetail() {
                     <FormField control={form.control} name="applicantEducation" render={({ field }) => (
                       <FormItem>
                         <FormLabel className="text-xs">Applicant (1-31)</FormLabel>
-                        <FormControl><Input type="number" {...field} /></FormControl>
+                        <FormControl><Input type="number" {...field} onChange={e => field.onChange(Number(e.target.value))} /></FormControl>
                       </FormItem>
                     )} />
                     <div className={`p-2 rounded text-center text-sm font-bold ${incEdu < 0 ? 'bg-red-100 text-red-700' : 'bg-green-100 text-green-700'}`}>
                       Inc: {incEdu}
-                      {incEdu < 0 && <p className="text-[10px] mt-1">DISQUALIFIED</p>}
+                      {incEdu < 0 && <p className="text-[10px] mt-1">BELOW STANDARD</p>}
                     </div>
                   </div>
 
@@ -148,11 +148,12 @@ export default function AdminApplicationDetail() {
                     <FormField control={form.control} name="applicantTraining" render={({ field }) => (
                       <FormItem>
                         <FormLabel className="text-xs">Applicant (1-31)</FormLabel>
-                        <FormControl><Input type="number" {...field} /></FormControl>
+                        <FormControl><Input type="number" {...field} onChange={e => field.onChange(Number(e.target.value))} /></FormControl>
                       </FormItem>
                     )} />
-                    <div className="p-2 rounded bg-slate-100 text-center text-sm font-bold">
+                    <div className={`p-2 rounded text-center text-sm font-bold ${incTra < 0 ? 'bg-red-100 text-red-700' : 'bg-green-100 text-green-700'}`}>
                       Inc: {incTra}
+                      {incTra < 0 && <p className="text-[10px] mt-1">BELOW STANDARD</p>}
                     </div>
                   </div>
 
@@ -165,11 +166,12 @@ export default function AdminApplicationDetail() {
                     <FormField control={form.control} name="applicantExperience" render={({ field }) => (
                       <FormItem>
                         <FormLabel className="text-xs">Applicant (1-31)</FormLabel>
-                        <FormControl><Input type="number" {...field} /></FormControl>
+                        <FormControl><Input type="number" {...field} onChange={e => field.onChange(Number(e.target.value))} /></FormControl>
                       </FormItem>
                     )} />
-                    <div className="p-2 rounded bg-slate-100 text-center text-sm font-bold">
+                    <div className={`p-2 rounded text-center text-sm font-bold ${incExp < 0 ? 'bg-red-100 text-red-700' : 'bg-green-100 text-green-700'}`}>
                       Inc: {incExp}
+                      {incExp < 0 && <p className="text-[10px] mt-1">BELOW STANDARD</p>}
                     </div>
                   </div>
                 </div>

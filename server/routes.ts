@@ -63,6 +63,24 @@ export async function registerRoutes(
         appId: applicant.appId,
         applicantCode: code,
       });
+
+      // Create IER automatically for initial screening
+      const position = await db.select().from(positions).where(eq(positions.positionId, appCode.positionId)).then(rows => rows[0]);
+      if (position) {
+        const ierData = {
+          appCodeId: appCode.appCodeId,
+          positionId: position.positionId,
+          eligibility: applicant.eligibility,
+          remarks: (Number(applicant.education) >= (Number(position.standardEducation) || 0) &&
+                    (Number(applicant.training) || 0) >= (Number(position.standardTraining) || 0) &&
+                    (Number(applicant.experience) || 0) >= (Number(position.standardExperience) || 0)) ? 'qualified' : 'disqualified' as any,
+          applicantEducation: Number(applicant.education),
+          applicantTraining: Number(applicant.training || 0),
+          applicantExperience: Number(applicant.experience || 0),
+        };
+        await storage.createIER(ierData);
+      }
+
       res.status(201).json(appCode);
     } catch (e) {
         console.log(e);
