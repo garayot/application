@@ -66,6 +66,9 @@ export const positions = pgTable("positions", {
   position: text("position").notNull(), // e.g., "Teacher I"
   salaryGrade: integer("salary_grade").notNull(),
   monthlySalary: decimal("monthly_salary").notNull(),
+  standardEducation: integer("standard_education").default(0),
+  standardTraining: integer("standard_training").default(0),
+  standardExperience: integer("standard_experience").default(0),
 });
 
 // Schools Division Office
@@ -94,10 +97,7 @@ export const ier = pgTable("ier", {
   remarks: remarksEnum("remarks").notNull(), // qualified/disqualified
   feedback: text("feedback"), // Optional feedback message
   
-  // New Qualification fields
-  standardEducation: integer("standard_education").default(0),
-  standardTraining: integer("standard_training").default(0),
-  standardExperience: integer("standard_experience").default(0),
+  // Applicant Levels
   applicantEducation: integer("applicant_education").default(0),
   applicantTraining: integer("applicant_training").default(0),
   applicantExperience: integer("applicant_experience").default(0),

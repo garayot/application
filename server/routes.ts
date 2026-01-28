@@ -110,9 +110,9 @@ export async function registerRoutes(
       if (!app) return res.sendStatus(404);
 
       // Calculation logic
-      const stdEdu = Number(data.standardEducation || 0);
-      const stdTra = Number(data.standardTraining || 0);
-      const stdExp = Number(data.standardExperience || 0);
+      const stdEdu = Number(app.position.standardEducation || 0);
+      const stdTra = Number(app.position.standardTraining || 0);
+      const stdExp = Number(app.position.standardExperience || 0);
       
       const appEdu = Number(data.applicantEducation || 0);
       const appTra = Number(data.applicantTraining || 0);
@@ -141,6 +141,41 @@ export async function registerRoutes(
     } catch (e) {
       console.error(e);
       res.status(400).json({ message: "Validation failed" });
+    }
+  });
+
+  // Positions
+  app.post(api.positions.list.path, async (req, res) => {
+    if (!req.isAuthenticated() || req.user!.role !== "admin") return res.sendStatus(403);
+    try {
+      const data = req.body;
+      const [result] = await db.insert(positions).values(data).returning();
+      res.status(201).json(result);
+    } catch (e) {
+      res.status(400).json({ message: "Failed to create position" });
+    }
+  });
+
+  app.patch("/api/positions/:id", async (req, res) => {
+    if (!req.isAuthenticated() || req.user!.role !== "admin") return res.sendStatus(403);
+    try {
+      const id = Number(req.params.id);
+      const data = req.body;
+      const [result] = await db.update(positions).set(data).where(eq(positions.positionId, id)).returning();
+      res.json(result);
+    } catch (e) {
+      res.status(400).json({ message: "Failed to update position" });
+    }
+  });
+
+  app.delete("/api/positions/:id", async (req, res) => {
+    if (!req.isAuthenticated() || req.user!.role !== "admin") return res.sendStatus(403);
+    try {
+      const id = Number(req.params.id);
+      await db.delete(positions).where(eq(positions.positionId, id));
+      res.sendStatus(204);
+    } catch (e) {
+      res.status(400).json({ message: "Failed to delete position" });
     }
   });
 

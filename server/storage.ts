@@ -183,7 +183,12 @@ export class DatabaseStorage implements IStorage {
       ...app,
       applicant,
       position,
-      ier: ierData,
+      ier: ierData ? {
+        ...ierData,
+        standardEducation: position.standardEducation,
+        standardTraining: position.standardTraining,
+        standardExperience: position.standardExperience
+      } : undefined,
       ies: iesData,
       car: carData
     };
@@ -246,9 +251,9 @@ export class DatabaseStorage implements IStorage {
     const count = await db.select().from(positions);
     if (count.length === 0) {
       await db.insert(positions).values([
-        { position: "Teacher I", salaryGrade: 11, monthlySalary: "27000" },
-        { position: "Teacher II", salaryGrade: 12, monthlySalary: "29165" },
-        { position: "Master Teacher I", salaryGrade: 18, monthlySalary: "46725" },
+        { position: "Teacher I", salaryGrade: 11, monthlySalary: "27000", standardEducation: 6, standardTraining: 1, standardExperience: 2 },
+        { position: "Teacher II", salaryGrade: 12, monthlySalary: "29165", standardEducation: 8, standardTraining: 2, standardExperience: 4 },
+        { position: "Master Teacher I", salaryGrade: 18, monthlySalary: "46725", standardEducation: 15, standardTraining: 10, standardExperience: 10 },
       ]);
     }
   }

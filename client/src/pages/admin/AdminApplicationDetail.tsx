@@ -21,9 +21,6 @@ const ierFormSchema = z.object({
   feedback: z.string().optional(),
   positionId: z.number(),
   // Qualification Levels (1-31)
-  standardEducation: z.coerce.number().min(0).max(31),
-  standardTraining: z.coerce.number().min(0).max(31),
-  standardExperience: z.coerce.number().min(0).max(31),
   applicantEducation: z.coerce.number().min(0).max(31),
   applicantTraining: z.coerce.number().min(0).max(31),
   applicantExperience: z.coerce.number().min(0).max(31),
@@ -69,18 +66,15 @@ export default function AdminApplicationDetail() {
         remarks: "qualified" as const,
         feedback: "",
         positionId: app.positionId,
-        standardEducation: 0,
-        standardTraining: 0,
-        standardExperience: 0,
         applicantEducation: 0,
         applicantTraining: 0,
         applicantExperience: 0,
       }
     });
 
-    const standardEducation = form.watch("standardEducation");
-    const standardTraining = form.watch("standardTraining");
-    const standardExperience = form.watch("standardExperience");
+    const standardEducation = app.position.standardEducation || 0;
+    const standardTraining = app.position.standardTraining || 0;
+    const standardExperience = app.position.standardExperience || 0;
     const applicantEducation = form.watch("applicantEducation");
     const applicantTraining = form.watch("applicantTraining");
     const applicantExperience = form.watch("applicantExperience");
@@ -129,12 +123,10 @@ export default function AdminApplicationDetail() {
                 <div className="grid grid-cols-3 gap-4 bg-slate-50 p-4 rounded-xl border">
                   <div className="space-y-4">
                     <p className="font-bold text-xs text-center">Education</p>
-                    <FormField control={form.control} name="standardEducation" render={({ field }) => (
-                      <FormItem>
-                        <FormLabel className="text-xs">Standard (1-31)</FormLabel>
-                        <FormControl><Input type="number" {...field} /></FormControl>
-                      </FormItem>
-                    )} />
+                    <div className="space-y-1">
+                      <p className="text-[10px] text-slate-400 uppercase font-bold">Standard</p>
+                      <p className="text-sm font-bold">{standardEducation}</p>
+                    </div>
                     <FormField control={form.control} name="applicantEducation" render={({ field }) => (
                       <FormItem>
                         <FormLabel className="text-xs">Applicant (1-31)</FormLabel>
@@ -149,12 +141,10 @@ export default function AdminApplicationDetail() {
 
                   <div className="space-y-4 border-l pl-4">
                     <p className="font-bold text-xs text-center">Training</p>
-                    <FormField control={form.control} name="standardTraining" render={({ field }) => (
-                      <FormItem>
-                        <FormLabel className="text-xs">Standard (1-31)</FormLabel>
-                        <FormControl><Input type="number" {...field} /></FormControl>
-                      </FormItem>
-                    )} />
+                    <div className="space-y-1">
+                      <p className="text-[10px] text-slate-400 uppercase font-bold">Standard</p>
+                      <p className="text-sm font-bold">{standardTraining}</p>
+                    </div>
                     <FormField control={form.control} name="applicantTraining" render={({ field }) => (
                       <FormItem>
                         <FormLabel className="text-xs">Applicant (1-31)</FormLabel>
@@ -168,12 +158,10 @@ export default function AdminApplicationDetail() {
 
                   <div className="space-y-4 border-l pl-4">
                     <p className="font-bold text-xs text-center">Experience</p>
-                    <FormField control={form.control} name="standardExperience" render={({ field }) => (
-                      <FormItem>
-                        <FormLabel className="text-xs">Standard (1-31)</FormLabel>
-                        <FormControl><Input type="number" {...field} /></FormControl>
-                      </FormItem>
-                    )} />
+                    <div className="space-y-1">
+                      <p className="text-[10px] text-slate-400 uppercase font-bold">Standard</p>
+                      <p className="text-sm font-bold">{standardExperience}</p>
+                    </div>
                     <FormField control={form.control} name="applicantExperience" render={({ field }) => (
                       <FormItem>
                         <FormLabel className="text-xs">Applicant (1-31)</FormLabel>

@@ -13,6 +13,7 @@ import Profile from "@/pages/Profile";
 import Apply from "@/pages/Apply";
 import ApplicationDetail from "@/pages/ApplicationDetail";
 import AdminDashboard from "@/pages/admin/AdminDashboard";
+import AdminHiring from "@/pages/admin/AdminHiring";
 import AdminApplicationDetail from "@/pages/admin/AdminApplicationDetail";
 
 function ProtectedRoute({
@@ -72,6 +73,9 @@ function Router() {
       <Route path="/admin/dashboard">
         <ProtectedRoute component={AdminDashboard} adminOnly />
       </Route>
+      <Route path="/admin/hiring">
+        <ProtectedRoute component={AdminHiring} adminOnly />
+      </Route>
       <Route path="/admin/application/:id">
         <ProtectedRoute component={AdminApplicationDetail} adminOnly />
       </Route>
@@ -81,6 +85,12 @@ function Router() {
         <ProtectedRoute component={AdminDashboard} adminOnly />
       </Route>
       <Route path="/admin/evaluations">
+        <ProtectedRoute component={AdminDashboard} adminOnly />
+      </Route>
+      <Route path="/admin/assessments">
+        <ProtectedRoute component={AdminDashboard} adminOnly />
+      </Route>
+      <Route path="/admin/final">
         <ProtectedRoute component={AdminDashboard} adminOnly />
       </Route>
 

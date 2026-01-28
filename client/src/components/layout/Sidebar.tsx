@@ -9,7 +9,8 @@ import {
   Building2,
   CheckSquare,
   ClipboardCheck,
-  Award
+  Award,
+  Briefcase
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -32,6 +33,7 @@ export function Sidebar() {
   const adminLinks = [
     { href: "/admin/dashboard", icon: LayoutDashboard, label: "Dashboard" },
     { href: "/admin/applicants", icon: UserCircle, label: "Applicants" },
+    { href: "/admin/hiring", icon: Briefcase, label: "Post Hiring" },
     { href: "/admin/evaluations", icon: CheckSquare, label: "Evaluations (IER)" },
     { href: "/admin/assessments", icon: ClipboardCheck, label: "Assessments (IES)" },
     { href: "/admin/final", icon: Award, label: "Final (CAR)" },
