@@ -31,9 +31,9 @@ const iesFormSchema = z.object({
   education: z.coerce.number().min(0).max(10),
   training: z.coerce.number().min(0).max(10),
   experience: z.coerce.number().min(0).max(10),
-  performance: z.coerce.number().min(0).max(30),
-  classObs: z.coerce.number().min(0).max(25),
-  portfolioBei: z.coerce.number().min(0).max(15),
+  pbetLetLptRating: z.coerce.number().min(0).max(10),
+  classObs: z.coerce.number().min(0).max(35),
+  nonClassObs: z.coerce.number().min(0).max(25),
 });
 
 const carFormSchema = z.object({
@@ -202,9 +202,9 @@ export default function AdminApplicationDetail() {
         education: 0,
         training: 0,
         experience: 0,
-        performance: 0,
+        pbetLetLptRating: 0,
         classObs: 0,
-        portfolioBei: 0
+        nonClassObs: 0
       }
     });
 
@@ -216,9 +216,9 @@ export default function AdminApplicationDetail() {
         education: Number(data.education),
         training: Number(data.training),
         experience: Number(data.experience),
-        performance: Number(data.performance),
+        pbetLetLptRating: Number(data.pbetLetLptRating),
         classObs: Number(data.classObs),
-        portfolioBei: Number(data.portfolioBei),
+        nonClassObs: Number(data.nonClassObs),
       };
 
       createIES.mutate({ id: app.ier!.ierId, data: payload }, {
@@ -265,21 +265,21 @@ export default function AdminApplicationDetail() {
                     <FormControl><Input type="number" {...field} /></FormControl>
                   </FormItem>
                 )} />
-                <FormField control={form.control} name="performance" render={({ field }) => (
+                <FormField control={form.control} name="pbetLetLptRating" render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Performance (Max 30)</FormLabel>
+                    <FormLabel>PBET/LET/LPT Rating (Max 10)</FormLabel>
                     <FormControl><Input type="number" {...field} /></FormControl>
                   </FormItem>
                 )} />
                 <FormField control={form.control} name="classObs" render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Classroom Obs (Max 25)</FormLabel>
+                    <FormLabel>Classroom Obs (Max 35)</FormLabel>
                     <FormControl><Input type="number" {...field} /></FormControl>
                   </FormItem>
                 )} />
-                <FormField control={form.control} name="portfolioBei" render={({ field }) => (
+                <FormField control={form.control} name="nonClassObs" render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Portfolio & BEI (Max 15)</FormLabel>
+                    <FormLabel>Non-Classroom Obs (Max 25)</FormLabel>
                     <FormControl><Input type="number" {...field} /></FormControl>
                   </FormItem>
                 )} />
@@ -341,9 +341,9 @@ export default function AdminApplicationDetail() {
                    <div>Edu: {app.ies?.education}</div>
                    <div>Tra: {app.ies?.training}</div>
                    <div>Exp: {app.ies?.experience}</div>
-                   <div>Perf: {app.ies?.performance}</div>
+                   <div>Rating: {(app.ies as any)?.pbetLetLptRating}</div>
                    <div>Obs: {app.ies?.classObs}</div>
-                   <div>Bei: {app.ies?.portfolioBei}</div>
+                   <div>Non-Obs: {(app.ies as any)?.nonClassObs}</div>
                 </div>
                 <Separator className="my-2" />
                 <p className="text-sm font-bold text-slate-500 uppercase">Total IES Score</p>

@@ -65,9 +65,9 @@ export default function ApplicationDetail() {
                   <th className="border border-slate-900 p-2 text-center">Edu (10)</th>
                   <th className="border border-slate-900 p-2 text-center">Tra (10)</th>
                   <th className="border border-slate-900 p-2 text-center">Exp (10)</th>
-                  <th className="border border-slate-900 p-2 text-center">Perf (30)</th>
-                  <th className="border border-slate-900 p-2 text-center">Obs (25)</th>
-                  <th className="border border-slate-900 p-2 text-center">Bei (15)</th>
+                  <th className="border border-slate-900 p-2 text-center">Rating (10)</th>
+                  <th className="border border-slate-900 p-2 text-center">Obs (35)</th>
+                  <th className="border border-slate-900 p-2 text-center">Non-Obs (25)</th>
                   <th className="border border-slate-900 p-2 text-center">Total</th>
                   <th className="border border-slate-900 p-2 text-left">Remarks</th>
                   <th className="border border-slate-900 p-2 text-left">For BI</th>
@@ -82,9 +82,9 @@ export default function ApplicationDetail() {
                   <td className="border border-slate-900 p-2 text-center">{app.ies?.education}</td>
                   <td className="border border-slate-900 p-2 text-center">{app.ies?.training}</td>
                   <td className="border border-slate-900 p-2 text-center">{app.ies?.experience}</td>
-                  <td className="border border-slate-900 p-2 text-center">{app.ies?.performance}</td>
+                  <td className="border border-slate-900 p-2 text-center">{(app.ies as any)?.pbetLetLptRating}</td>
                   <td className="border border-slate-900 p-2 text-center">{app.ies?.classObs}</td>
-                  <td className="border border-slate-900 p-2 text-center">{app.ies?.portfolioBei}</td>
+                  <td className="border border-slate-900 p-2 text-center">{(app.ies as any)?.nonClassObs}</td>
                   <td className="border border-slate-900 p-2 text-center font-bold">{app.ies?.actualScore}</td>
                   <td className="border border-slate-900 p-2">{app.car?.remarks || "N/A"}</td>
                   <td className="border border-slate-900 p-2 capitalize">{app.car?.forBi}</td>
@@ -144,9 +144,9 @@ export default function ApplicationDetail() {
                         <ScoreItem label="Education" score={app.ies.education} max={10} />
                         <ScoreItem label="Training" score={app.ies.training} max={10} />
                         <ScoreItem label="Experience" score={app.ies.experience} max={10} />
-                        <ScoreItem label="Performance" score={app.ies.performance} max={30} />
-                        <ScoreItem label="Classroom Observation" score={app.ies.classObs} max={25} />
-                        <ScoreItem label="Portfolio & BEI" score={app.ies.portfolioBei} max={15} />
+                        <ScoreItem label="PBET/LET/LPT Rating" score={(app.ies as any).pbetLetLptRating} max={10} />
+                        <ScoreItem label="Classroom Observation" score={app.ies.classObs} max={35} />
+                        <ScoreItem label="Non-Classroom Observation" score={(app.ies as any).nonClassObs} max={25} />
                       </div>
                       <Separator className="my-4" />
                       <div className="flex justify-between items-center">

@@ -114,10 +114,10 @@ export const ies = pgTable("ies", {
   education: decimal("education").notNull(), // Max 10
   training: decimal("training").notNull(), // Max 10
   experience: decimal("experience").notNull(), // Max 10
-  performance: decimal("performance").notNull(), // Max 30
-  classObs: decimal("class_obs").notNull(), // Max 25
-  portfolioBei: decimal("portfolio_bei").notNull(), // Max 15
-  actualScore: decimal("actual_score").notNull(), // Computed
+  pbetLetLptRating: decimal("pbet_let_lpt_rating").notNull(), // Max 10
+  classObs: decimal("class_obs").notNull(), // Max 35
+  nonClassObs: decimal("non_class_obs").notNull(), // Max 25
+  actualScore: decimal("actual_score").notNull(), // Computed (pbetLetLptRating * 10)
 });
 
 // CAR (Comparative Assessment Result)

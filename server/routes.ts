@@ -207,18 +207,13 @@ export async function registerRoutes(
     try {
         const data = req.body;
         // Compute actual score based on manual inputs
-        const actualScore = 
-            Number(data.education || 0) + 
-            Number(data.training || 0) + 
-            Number(data.experience || 0) + 
-            Number(data.performance || 0) + 
-            Number(data.classObs || 0) + 
-            Number(data.portfolioBei || 0);
+        const pbetRating = Number(data.pbetLetLptRating || 0);
+        const actualScore = (pbetRating * 10).toFixed(2);
 
         const result = await storage.createIES({
             ...data,
             ierId,
-            actualScore: actualScore.toFixed(2),
+            actualScore: actualScore,
         });
         res.status(201).json(result);
     } catch (e) {

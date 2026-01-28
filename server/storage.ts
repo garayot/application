@@ -251,7 +251,13 @@ export class DatabaseStorage implements IStorage {
   }
 
   async createIES(data: any): Promise<IES> {
-    const [result] = await db.insert(ies).values(data).returning();
+    const pbetRating = Number(data.pbetLetLptRating || 0);
+    const actualScore = (pbetRating * 10).toString();
+    
+    const [result] = await db.insert(ies).values({
+      ...data,
+      actualScore
+    }).returning();
     // Update application status to under assessment
     const [ierRec] = await db.select().from(ier).where(eq(ier.ierId, data.ierId));
     if (ierRec) {
