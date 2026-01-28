@@ -65,9 +65,9 @@ export default function ApplicationDetail() {
                   <th className="border border-slate-900 p-2 text-center">Edu (10)</th>
                   <th className="border border-slate-900 p-2 text-center">Tra (10)</th>
                   <th className="border border-slate-900 p-2 text-center">Exp (10)</th>
-                  <th className="border border-slate-900 p-2 text-center">Rating (10)</th>
+                  <th className="border border-slate-900 p-2 text-center">PBET/LET/LPT (10)</th>
                   <th className="border border-slate-900 p-2 text-center">Obs (35)</th>
-                  <th className="border border-slate-900 p-2 text-center">Non-Obs (25)</th>
+                  <th className="border border-slate-900 p-2 text-center">Non Class Obs (25)</th>
                   <th className="border border-slate-900 p-2 text-center">Total</th>
                   <th className="border border-slate-900 p-2 text-left">Remarks</th>
                   <th className="border border-slate-900 p-2 text-left">For BI</th>

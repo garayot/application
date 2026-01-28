@@ -443,9 +443,9 @@ export default function AdminApplicationDetail() {
                 <th className="border border-slate-900 p-1 text-center">Edu</th>
                 <th className="border border-slate-900 p-1 text-center">Tra</th>
                 <th className="border border-slate-900 p-1 text-center">Exp</th>
-                <th className="border border-slate-900 p-1 text-center">Perf</th>
+                <th className="border border-slate-900 p-1 text-center">Rating</th>
                 <th className="border border-slate-900 p-1 text-center">Obs</th>
-                <th className="border border-slate-900 p-1 text-center">Bei</th>
+                <th className="border border-slate-900 p-1 text-center">Non-Obs</th>
                 <th className="border border-slate-900 p-1 text-center">Total</th>
                 <th className="border border-slate-900 p-1 text-left">Remarks</th>
                 <th className="border border-slate-900 p-1 text-left">BI</th>
@@ -460,9 +460,9 @@ export default function AdminApplicationDetail() {
                 <td className="border border-slate-900 p-1 text-center">{app.ies?.education}</td>
                 <td className="border border-slate-900 p-1 text-center">{app.ies?.training}</td>
                 <td className="border border-slate-900 p-1 text-center">{app.ies?.experience}</td>
-                <td className="border border-slate-900 p-1 text-center">{app.ies?.performance}</td>
+                <td className="border border-slate-900 p-1 text-center">{(app.ies as any)?.pbetLetLptRating}</td>
                 <td className="border border-slate-900 p-1 text-center">{app.ies?.classObs}</td>
-                <td className="border border-slate-900 p-1 text-center">{app.ies?.portfolioBei}</td>
+                <td className="border border-slate-900 p-1 text-center">{(app.ies as any)?.nonClassObs}</td>
                 <td className="border border-slate-900 p-1 text-center font-bold">{app.ies?.actualScore}</td>
                 <td className="border border-slate-900 p-1">{app.car?.remarks || "N/A"}</td>
                 <td className="border border-slate-900 p-1 capitalize">{app.car?.forBi}</td>
