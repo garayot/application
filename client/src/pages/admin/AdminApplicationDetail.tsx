@@ -28,9 +28,6 @@ const ierFormSchema = z.object({
 
 const iesFormSchema = z.object({
   schoolId: z.number(),
-  education: z.coerce.number().min(0).max(10),
-  training: z.coerce.number().min(0).max(10),
-  experience: z.coerce.number().min(0).max(10),
   pbetLetLptRating: z.coerce.number().min(0).max(10),
   classObs: z.coerce.number().min(0).max(35),
   nonClassObs: z.coerce.number().min(0).max(25),
@@ -199,9 +196,6 @@ export default function AdminApplicationDetail() {
       resolver: zodResolver(iesFormSchema),
       defaultValues: {
         schoolId: schools?.[0]?.schoolId || 0,
-        education: 0,
-        training: 0,
-        experience: 0,
         pbetLetLptRating: 0,
         classObs: 0,
         nonClassObs: 0
@@ -213,9 +207,6 @@ export default function AdminApplicationDetail() {
       const payload = {
         ...data,
         schoolId: Number(data.schoolId),
-        education: Number(data.education),
-        training: Number(data.training),
-        experience: Number(data.experience),
         pbetLetLptRating: Number(data.pbetLetLptRating),
         classObs: Number(data.classObs),
         nonClassObs: Number(data.nonClassObs),
@@ -247,24 +238,24 @@ export default function AdminApplicationDetail() {
                   </FormItem>
                 )} />
               <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-                <FormField control={form.control} name="education" render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Education (Max 10)</FormLabel>
-                    <FormControl><Input type="number" {...field} /></FormControl>
-                  </FormItem>
-                )} />
-                <FormField control={form.control} name="training" render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Training (Max 10)</FormLabel>
-                    <FormControl><Input type="number" {...field} /></FormControl>
-                  </FormItem>
-                )} />
-                <FormField control={form.control} name="experience" render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Experience (Max 10)</FormLabel>
-                    <FormControl><Input type="number" {...field} /></FormControl>
-                  </FormItem>
-                )} />
+                <div className="space-y-2">
+                  <FormLabel>Education (Auto)</FormLabel>
+                  <div className="h-10 px-3 py-2 rounded-md border bg-slate-100 text-slate-500 flex items-center">
+                    Auto-calculated from IER
+                  </div>
+                </div>
+                <div className="space-y-2">
+                  <FormLabel>Training (Auto)</FormLabel>
+                  <div className="h-10 px-3 py-2 rounded-md border bg-slate-100 text-slate-500 flex items-center">
+                    Auto-calculated from IER
+                  </div>
+                </div>
+                <div className="space-y-2">
+                  <FormLabel>Experience (Auto)</FormLabel>
+                  <div className="h-10 px-3 py-2 rounded-md border bg-slate-100 text-slate-500 flex items-center">
+                    Auto-calculated from IER
+                  </div>
+                </div>
                 <FormField control={form.control} name="pbetLetLptRating" render={({ field }) => (
                   <FormItem>
                     <FormLabel>PBET/LET/LPT Rating (Max 10)</FormLabel>

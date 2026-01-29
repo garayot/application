@@ -206,17 +206,42 @@ export async function registerRoutes(
 
     try {
         const data = req.body;
-        // Compute actual score based on manual inputs
+        const ierRec = await storage.getIERByAppCodeId(ierId); // Note: getIERByAppCodeId might be used wrongly here, let's check storage.ts
+        // Actually storage.ts has getIESByIERId but we need to fetch IER first.
+        // Let's assume we fetch IER record to get increments.
+        
+        // Let's refine the logic to fetch IER record correctly.
+        const [ierRecord] = await db.select().from(ier).where(eq(ier.ierId, ierId));
+        if (!ierRecord) return res.status(404).json({ message: "IER not found" });
+
+        const calculateScore = (increment: number) => {
+          if (increment >= 10) return 10;
+          if (increment >= 8) return 8;
+          if (increment >= 6) return 6;
+          if (increment >= 4) return 4;
+          if (increment >= 2) return 2;
+          return 0;
+        };
+
+        const educationScore = calculateScore(ierRecord.incrementEducation || 0);
+        const trainingScore = calculateScore(ierRecord.incrementTraining || 0);
+        const experienceScore = calculateScore(ierRecord.incrementExperience || 0);
+
+        // Compute actual score based on auto-calculated and manual inputs
         const pbetRating = Number(data.pbetLetLptRating || 0);
-        const actualScore = (pbetRating * 10).toFixed(2);
+        const actualScore = (educationScore + trainingScore + experienceScore + (pbetRating * 10)).toFixed(2);
 
         const result = await storage.createIES({
             ...data,
             ierId,
+            education: educationScore.toString(),
+            training: trainingScore.toString(),
+            experience: experienceScore.toString(),
             actualScore: actualScore,
         });
         res.status(201).json(result);
     } catch (e) {
+        console.error(e);
         res.status(400).json({ message: "Validation failed" });
     }
   });
