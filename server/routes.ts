@@ -12,7 +12,7 @@ import { eq } from "drizzle-orm";
 
 export async function registerRoutes(
   httpServer: Server,
-  app: Express
+  app: Express,
 ): Promise<Server> {
   // Set up authentication
   setupAuth(app);
@@ -32,17 +32,20 @@ export async function registerRoutes(
 
   app.post(api.applicants.updateProfile.path, async (req, res) => {
     if (!req.isAuthenticated()) return res.sendStatus(401);
-    
+
     // Check if profile exists
     let applicant = await storage.getApplicantByUserId(req.user!.id);
-    
+
     try {
       const data = api.applicants.updateProfile.input.parse(req.body);
-      
+
       if (applicant) {
         applicant = await storage.updateApplicantProfile(applicant.appId, data);
       } else {
-        applicant = await storage.createApplicantProfile({ ...data, userId: req.user!.id });
+        applicant = await storage.createApplicantProfile({
+          ...data,
+          userId: req.user!.id,
+        });
       }
       res.json(applicant);
     } catch (e) {
@@ -54,13 +57,16 @@ export async function registerRoutes(
   app.post(api.applications.create.path, async (req, res) => {
     if (!req.isAuthenticated()) return res.sendStatus(401);
     const applicant = await storage.getApplicantByUserId(req.user!.id);
-    if (!applicant) return res.status(400).json({ message: "Please complete your profile first" });
+    if (!applicant)
+      return res
+        .status(400)
+        .json({ message: "Please complete your profile first" });
 
     try {
       const data = api.applications.create.input.parse(req.body);
       // Generate Applicant Code (mock logic: APP-{Date}-{Random})
-      const code = `APP-${Date.now().toString().slice(-6)}-${Math.floor(Math.random()*1000)}`;
-      
+      const code = `APP-${Date.now().toString().slice(-6)}-${Math.floor(Math.random() * 1000)}`;
+
       const appCode = await storage.createApplication({
         ...data,
         appId: applicant.appId,
@@ -74,9 +80,15 @@ export async function registerRoutes(
           appCodeId: appCode.appCodeId,
           positionId: position.positionId,
           eligibility: applicant.eligibility,
-          remarks: (Number(applicant.education) >= (Number(position.standardEducation) || 0) &&
-                    (Number(applicant.training) || 0) >= (Number(position.standardTraining) || 0) &&
-                    (Number(applicant.experience) || 0) >= (Number(position.standardExperience) || 0)) ? 'qualified' : 'disqualified' as any,
+          remarks:
+            Number(applicant.education) >=
+              (Number(position.standardEducation) || 0) &&
+            (Number(applicant.training) || 0) >=
+              (Number(position.standardTraining) || 0) &&
+            (Number(applicant.experience) || 0) >=
+              (Number(position.standardExperience) || 0)
+              ? "qualified"
+              : ("disqualified" as any),
           applicantEducation: Number(applicant.education),
           applicantTraining: Number(applicant.training || 0),
           applicantExperience: Number(applicant.experience || 0),
@@ -86,7 +98,7 @@ export async function registerRoutes(
 
       res.status(201).json(appCode);
     } catch (e) {
-        console.log(e);
+      console.log(e);
       res.status(400).json({ message: "Validation failed" });
     }
   });
@@ -95,13 +107,14 @@ export async function registerRoutes(
     if (!req.isAuthenticated()) return res.sendStatus(401);
     const applicant = await storage.getApplicantByUserId(req.user!.id);
     if (!applicant) return res.json([]);
-    
+
     const apps = await storage.getApplicationsByApplicant(applicant.appId);
     res.json(apps);
   });
 
   app.get(api.applications.listAll.path, async (req, res) => {
-    if (!req.isAuthenticated() || req.user!.role !== "admin") return res.sendStatus(403);
+    if (!req.isAuthenticated() || req.user!.role !== "admin")
+      return res.sendStatus(403);
     const apps = await storage.getAllApplications();
     res.json(apps);
   });
@@ -114,7 +127,8 @@ export async function registerRoutes(
 
     if (req.user?.role !== "admin") {
       const applicant = await storage.getApplicantByUserId(req.user!.id);
-      if (!applicant || applicant.appId !== fullApp.appId) return res.sendStatus(403);
+      if (!applicant || applicant.appId !== fullApp.appId)
+        return res.sendStatus(403);
     }
 
     res.json(fullApp);
@@ -122,7 +136,8 @@ export async function registerRoutes(
 
   // IER (HR)
   app.post(api.ier.create.path, async (req, res) => {
-    if (!req.isAuthenticated() || req.user!.role !== "admin") return res.sendStatus(403);
+    if (!req.isAuthenticated() || req.user!.role !== "admin")
+      return res.sendStatus(403);
     const appCodeId = Number(req.params.id);
 
     try {
@@ -134,7 +149,7 @@ export async function registerRoutes(
       const stdEdu = Number(app.position.standardEducation || 0);
       const stdTra = Number(app.position.standardTraining || 0);
       const stdExp = Number(app.position.standardExperience || 0);
-      
+
       const appEdu = Number(data.applicantEducation || 0);
       const appTra = Number(data.applicantTraining || 0);
       const appExp = Number(data.applicantExperience || 0);
@@ -144,9 +159,9 @@ export async function registerRoutes(
       const incExp = appExp - stdExp;
 
       // Disqualification logic: if Education increment is negative
-      let remarks = data.remarks || 'qualified';
+      let remarks = data.remarks || "qualified";
       if (incEdu < 0) {
-        remarks = 'disqualified';
+        remarks = "disqualified";
       }
 
       const result = await storage.createIER({
@@ -167,19 +182,23 @@ export async function registerRoutes(
 
   // Positions
   app.post("/api/positions", async (req, res) => {
-    if (!req.isAuthenticated() || req.user!.role !== "admin") return res.sendStatus(403);
+    if (!req.isAuthenticated() || req.user!.role !== "admin")
+      return res.sendStatus(403);
     try {
       const data = req.body;
       const result = await storage.createPosition(data);
       res.status(201).json(result);
     } catch (e) {
       console.error("Position creation error:", e);
-      res.status(400).json({ message: "Failed to create position", error: String(e) });
+      res
+        .status(400)
+        .json({ message: "Failed to create position", error: String(e) });
     }
   });
 
   app.patch("/api/positions/:id", async (req, res) => {
-    if (!req.isAuthenticated() || req.user!.role !== "admin") return res.sendStatus(403);
+    if (!req.isAuthenticated() || req.user!.role !== "admin")
+      return res.sendStatus(403);
     try {
       const id = Number(req.params.id);
       const data = req.body;
@@ -187,12 +206,15 @@ export async function registerRoutes(
       res.json(result);
     } catch (e) {
       console.error("Position update error:", e);
-      res.status(400).json({ message: "Failed to update position", error: String(e) });
+      res
+        .status(400)
+        .json({ message: "Failed to update position", error: String(e) });
     }
   });
 
   app.delete("/api/positions/:id", async (req, res) => {
-    if (!req.isAuthenticated() || req.user!.role !== "admin") return res.sendStatus(403);
+    if (!req.isAuthenticated() || req.user!.role !== "admin")
+      return res.sendStatus(403);
     try {
       const id = Number(req.params.id);
       await storage.deletePosition(id);
@@ -204,80 +226,49 @@ export async function registerRoutes(
 
   // IES (HR)
   app.post(api.ies.create.path, async (req, res) => {
-    if (!req.isAuthenticated() || req.user!.role !== "admin") return res.sendStatus(403);
+    if (!req.isAuthenticated() || req.user!.role !== "admin")
+      return res.sendStatus(403);
     const ierId = Number(req.params.id);
 
     try {
-        const data = req.body;
-        const ierRec = await storage.getIERByAppCodeId(ierId); // Note: getIERByAppCodeId might be used wrongly here, let's check storage.ts
-        // Actually storage.ts has getIESByIERId but we need to fetch IER first.
-        // Let's assume we fetch IER record to get increments.
-        
-        // Let's refine the logic to fetch IER record correctly.
-        const [ierRecord] = await db.select().from(ier).where(eq(ier.ierId, ierId));
-        if (!ierRecord) return res.status(404).json({ message: "IER not found" });
-
-        const calculateScore = (increment: number) => {
-          if (increment >= 10) return 10;
-          if (increment >= 8) return 8;
-          if (increment >= 6) return 6;
-          if (increment >= 4) return 4;
-          if (increment >= 2) return 2;
-          return 0;
-        };
-
-        const educationScore = calculateScore(ierRecord.incrementEducation || 0);
-        const trainingScore = calculateScore(ierRecord.incrementTraining || 0);
-        const experienceScore = calculateScore(ierRecord.incrementExperience || 0);
-
-        // Compute actual score based on auto-calculated and manual inputs
-        const pbetRating = Number(data.pbetLetLptRating || 0);
-        const classObs = Number(data.classObs || 0);
-        const nonClassObs = Number(data.nonClassObs || 0);
-        
-        const actualScore = (educationScore + trainingScore + experienceScore + pbetRating + classObs + nonClassObs).toFixed(2);
-
-        const result = await storage.createIES({
-            ...data,
-            ierId,
-            education: educationScore.toString(),
-            training: trainingScore.toString(),
-            experience: experienceScore.toString(),
-            actualScore: actualScore,
-        });
-        res.status(201).json(result);
+      const data = req.body;
+      const result = await storage.createIES({
+        ...data,
+        ierId,
+      });
+      res.status(201).json(result);
     } catch (e) {
-        console.error(e);
-        res.status(400).json({ message: "Validation failed" });
+      console.error(e);
+      res.status(400).json({ message: "Validation failed" });
     }
   });
 
   // CAR (ASDS)
   app.post(api.car.create.path, async (req, res) => {
-    if (!req.isAuthenticated() || req.user!.role !== "admin") return res.sendStatus(403);
+    if (!req.isAuthenticated() || req.user!.role !== "admin")
+      return res.sendStatus(403);
     const iesId = Number(req.params.id);
 
     try {
-        const data = req.body;
-        
-        // Ensure forBi is present as it is notNull in schema
-        if (!data.forBi) {
-            data.forBi = "yes";
-        }
+      const data = req.body;
 
-        const result = await storage.createCAR({
-            ...data,
-            iesId,
-            finalizedBy: null, // Set to null to avoid foreign key constraint on asds table
-            dateOfFinalDeliberation: new Date(),
-        });
-        res.status(201).json(result);
-    } catch(e) {
-        console.error("CAR creation error:", e);
-        res.status(400).json({ message: "Validation failed" });
+      // Ensure forBi is present as it is notNull in schema
+      if (!data.forBi) {
+        data.forBi = "yes";
+      }
+
+      const result = await storage.createCAR({
+        ...data,
+        iesId,
+        finalizedBy: null, // Set to null to avoid foreign key constraint on asds table
+        dateOfFinalDeliberation: new Date(),
+      });
+      res.status(201).json(result);
+    } catch (e) {
+      console.error("CAR creation error:", e);
+      res.status(400).json({ message: "Validation failed" });
     }
   });
-
 
   // Lists
   app.get(api.positions.list.path, async (req, res) => {
@@ -289,13 +280,13 @@ export async function registerRoutes(
     const schools = await storage.getSchools();
     res.json(schools);
   });
-  
-  app.get(api.applicants.list.path, async (req, res) => {
-     if (!req.isAuthenticated() || req.user!.role !== "admin") return res.sendStatus(403);
-     const applicants = await storage.getAllApplicants();
-     res.json(applicants);
-  });
 
+  app.get(api.applicants.list.path, async (req, res) => {
+    if (!req.isAuthenticated() || req.user!.role !== "admin")
+      return res.sendStatus(403);
+    const applicants = await storage.getAllApplicants();
+    res.json(applicants);
+  });
 
   // Seed Data
   await storage.seedPositions();
