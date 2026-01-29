@@ -232,7 +232,10 @@ export async function registerRoutes(
 
         // Compute actual score based on auto-calculated and manual inputs
         const pbetRating = Number(data.pbetLetLptRating || 0);
-        const actualScore = (educationScore + trainingScore + experienceScore + (pbetRating * 10)).toFixed(2);
+        const classObs = Number(data.classObs || 0);
+        const nonClassObs = Number(data.nonClassObs || 0);
+        
+        const actualScore = (educationScore + trainingScore + experienceScore + pbetRating + classObs + nonClassObs).toFixed(2);
 
         const result = await storage.createIES({
             ...data,
