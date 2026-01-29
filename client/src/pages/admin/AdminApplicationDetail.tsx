@@ -13,6 +13,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { useToast } from "@/hooks/use-toast";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
+import { ExternalLink, FileText, User } from "lucide-react";
 
 // Schemas matching server expectations
 const ierFormSchema = z.object({
@@ -53,6 +54,109 @@ export default function AdminApplicationDetail() {
   const { toast } = useToast();
 
   if (isLoading || !app) return <Layout><div>Loading application...</div></Layout>;
+
+  // === Applicant Info Section ===
+  const ApplicantInfo = () => (
+    <Card className="mb-8 border-slate-200 shadow-sm">
+      <CardHeader className="bg-slate-50/50">
+        <CardTitle className="text-lg flex items-center gap-2">
+          <User className="w-5 h-5 text-primary" />
+          Applicant Personal Information
+        </CardTitle>
+      </CardHeader>
+      <CardContent className="pt-6">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div className="space-y-4">
+            <div>
+              <p className="text-xs font-bold text-slate-400 uppercase tracking-wider">Full Name</p>
+              <p className="text-slate-900 font-medium">{app.applicant.name}</p>
+            </div>
+            <div>
+              <p className="text-xs font-bold text-slate-400 uppercase tracking-wider">Email Address</p>
+              <p className="text-slate-900 font-medium">{app.applicant.email}</p>
+            </div>
+            <div>
+              <p className="text-xs font-bold text-slate-400 uppercase tracking-wider">Contact Number</p>
+              <p className="text-slate-900 font-medium">{app.applicant.contact}</p>
+            </div>
+            <div>
+              <p className="text-xs font-bold text-slate-400 uppercase tracking-wider">Address</p>
+              <p className="text-slate-900 font-medium">{app.applicant.address}</p>
+            </div>
+          </div>
+
+          <div className="space-y-4">
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <p className="text-xs font-bold text-slate-400 uppercase tracking-wider">Age</p>
+                <p className="text-slate-900 font-medium">{app.applicant.age}</p>
+              </div>
+              <div>
+                <p className="text-xs font-bold text-slate-400 uppercase tracking-wider">Sex</p>
+                <p className="text-slate-900 font-medium capitalize">{app.applicant.sex}</p>
+              </div>
+            </div>
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <p className="text-xs font-bold text-slate-400 uppercase tracking-wider">Civil Status</p>
+                <p className="text-slate-900 font-medium capitalize">{app.applicant.civilStatus}</p>
+              </div>
+              <div>
+                <p className="text-xs font-bold text-slate-400 uppercase tracking-wider">Religion</p>
+                <p className="text-slate-900 font-medium">{app.applicant.religion}</p>
+              </div>
+            </div>
+            <div>
+              <p className="text-xs font-bold text-slate-400 uppercase tracking-wider">Education</p>
+              <p className="text-slate-900 font-medium">{app.applicant.education}</p>
+            </div>
+            <div>
+              <p className="text-xs font-bold text-slate-400 uppercase tracking-wider">Eligibility</p>
+              <p className="text-slate-900 font-medium">{app.applicant.eligibility}</p>
+            </div>
+          </div>
+
+          <div className="space-y-4 bg-primary/5 p-4 rounded-lg border border-primary/10">
+            <p className="text-sm font-bold text-primary flex items-center gap-2 mb-3">
+              <FileText className="w-4 h-4" />
+              Application Documents
+            </p>
+            {app.applicant.pdsUrl ? (
+              <Button 
+                variant="outline" 
+                size="sm" 
+                className="w-full justify-start gap-2 bg-white" 
+                asChild
+              >
+                <a href={app.applicant.pdsUrl} target="_blank" rel="noopener noreferrer">
+                  <ExternalLink className="w-4 h-4" />
+                  Personal Data Sheet (PDS)
+                </a>
+              </Button>
+            ) : (
+              <p className="text-xs text-slate-500 italic">No PDS uploaded</p>
+            )}
+            
+            {app.applicant.letterUrl ? (
+              <Button 
+                variant="outline" 
+                size="sm" 
+                className="w-full justify-start gap-2 bg-white" 
+                asChild
+              >
+                <a href={app.applicant.letterUrl} target="_blank" rel="noopener noreferrer">
+                  <ExternalLink className="w-4 h-4" />
+                  Intent Letter
+                </a>
+              </Button>
+            ) : (
+              <p className="text-xs text-slate-500 italic">No Intent Letter uploaded</p>
+            )}
+          </div>
+        </div>
+      </CardContent>
+    </Card>
+  );
 
   // === IER FORM (Step 1) ===
   const IERSection = () => {
@@ -466,6 +570,7 @@ export default function AdminApplicationDetail() {
 
         {/* Evaluation Flow */}
         <div className="space-y-8 print:hidden">
+          <ApplicantInfo />
           <IERSection />
           <IESSection />
           <CARSection />
