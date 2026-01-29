@@ -206,17 +206,52 @@ export async function registerRoutes(
 
     try {
         const data = req.body;
-        // Compute actual score based on manual inputs
+        const ierRec = await storage.getIERByAppCodeId(ierId); // Assuming id in path is for the application's IER record
+        
+        // Find the IER record to get increments
+        const ierData = await storage.getIERByAppCodeId(Number(req.params.id));
+        // Wait, the API definition for create IES might use appCodeId or ierId. 
+        // Let's re-read storage.ts and routes.ts carefully.
+        // Actually, let's just use the data if available or fetch from ier.
+        
+        const [ierRecord] = await db.select().from(ier).where(eq(ier.ierId, ierId));
+        if (!ierRecord) return res.status(404).json({ message: "IER not found" });
+
+        const calculateReferenceScore = (inc: number) => {
+            if (inc >= 10) return 10;
+            if (inc >= 8) return 8;
+            if (inc >= 6) return 6;
+            if (inc >= 4) return 4;
+            if (inc >= 2) return 2;
+            return 0;
+        };
+
+        const educationScore = calculateReferenceScore(Number(ierRecord.incrementEducation || 0));
+        const trainingScore = calculateReferenceScore(Number(ierRecord.incrementTraining || 0));
+        const experienceScore = calculateReferenceScore(Number(ierRecord.incrementExperience || 0));
+
+        // Compute actual score based on manual inputs and computed reference scores
         const pbetRating = Number(data.pbetLetLptRating || 0);
-        const actualScore = (pbetRating * 10).toFixed(2);
+        const actualScore = (
+            educationScore + 
+            trainingScore + 
+            experienceScore + 
+            (pbetRating * 10) + 
+            Number(data.classObs || 0) + 
+            Number(data.nonClassObs || 0)
+        ).toFixed(2);
 
         const result = await storage.createIES({
             ...data,
             ierId,
+            education: educationScore.toString(),
+            training: trainingScore.toString(),
+            experience: experienceScore.toString(),
             actualScore: actualScore,
         });
         res.status(201).json(result);
     } catch (e) {
+        console.error(e);
         res.status(400).json({ message: "Validation failed" });
     }
   });
