@@ -6,6 +6,9 @@ import { api, buildUrl } from "@shared/routes";
 import { z } from "zod";
 import path from "path";
 import express from "express";
+import { db } from "./db";
+import { ier } from "@shared/schema";
+import { eq } from "drizzle-orm";
 
 export async function registerRoutes(
   httpServer: Server,
