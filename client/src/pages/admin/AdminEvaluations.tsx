@@ -106,12 +106,10 @@ export default function AdminEvaluations() {
 
         {/* Hidden Print Content */}
         {selectedPositionId && selectedPositionId !== "all" && (
-          <div className="hidden">
-            <IERPrint 
-              applications={filteredApps || []} 
-              position={selectedPosition} 
-            />
-          </div>
+          <IERPrint 
+            applications={filteredApps || []} 
+            position={selectedPosition} 
+          />
         )}
 
         {!selectedPositionId || selectedPositionId === "all" ? (
