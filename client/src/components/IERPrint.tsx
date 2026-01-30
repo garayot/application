@@ -59,15 +59,15 @@ export function IERPrint({ applications, position }: IERPrintProps) {
             <div className="ml-8 space-y-1 mt-1">
               <div className="flex items-center">
                 <span className="w-40">Education</span>
-                <span className="border-b border-black flex-1 min-h-[1.2em]">{position?.standardEducation ? `${position.standardEducation} units/degree` : ""}</span>
+                <span className="border-b border-black flex-1 min-h-[1.2em]">{position?.standardEducation ? `${position.standardEducation} QS Level` : ""}</span>
               </div>
               <div className="flex items-center">
                 <span className="w-40">Training</span>
-                <span className="border-b border-black flex-1 min-h-[1.2em]">{position?.standardTraining ? `${position.standardTraining} hours` : ""}</span>
+                <span className="border-b border-black flex-1 min-h-[1.2em]">{position?.standardTraining ? `${position.standardTraining} QS Level` : ""}</span>
               </div>
               <div className="flex items-center">
                 <span className="w-40">Experience</span>
-                <span className="border-b border-black flex-1 min-h-[1.2em]">{position?.standardExperience ? `${position.standardExperience} months` : ""}</span>
+                <span className="border-b border-black flex-1 min-h-[1.2em]">{position?.standardExperience ? `${position.standardExperience} QS Level` : ""}</span>
               </div>
               <div className="flex items-center">
                 <span className="w-40">Eligibility</span>
