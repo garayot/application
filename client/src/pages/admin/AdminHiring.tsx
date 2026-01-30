@@ -133,21 +133,21 @@ export default function AdminHiring() {
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                   <FormField control={form.control} name="standardEducation" render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Education Standard (1-31)</FormLabel>
+                      <FormLabel>Education QS (1-31)</FormLabel>
                       <FormControl><Input type="number" {...field} onChange={e => field.onChange(Number(e.target.value))} /></FormControl>
                       <FormMessage />
                     </FormItem>
                   )} />
                   <FormField control={form.control} name="standardTraining" render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Training Standard (1-31)</FormLabel>
+                      <FormLabel>Training QS (1-31)</FormLabel>
                       <FormControl><Input type="number" {...field} onChange={e => field.onChange(Number(e.target.value))} /></FormControl>
                       <FormMessage />
                     </FormItem>
                   )} />
                   <FormField control={form.control} name="standardExperience" render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Experience Standard (1-31)</FormLabel>
+                      <FormLabel>Experience QS (1-31)</FormLabel>
                       <FormControl><Input type="number" {...field} onChange={e => field.onChange(Number(e.target.value))} /></FormControl>
                       <FormMessage />
                     </FormItem>
