@@ -80,7 +80,7 @@ export default function Apply() {
                   )}
                   {pos.levels && (
                     <span className="bg-purple-50 text-purple-700 px-2 py-1 rounded-md font-medium capitalize">
-                      {pos.levels}
+                      {pos.levels} {pos.major && `(${pos.major})`}
                     </span>
                   )}
                   <span className="bg-slate-100 px-2 py-1 rounded-md text-slate-700 font-medium">

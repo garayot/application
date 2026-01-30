@@ -31,6 +31,7 @@ export default function AdminHiring() {
       standardExperience: 0,
       schoolYear: "",
       levels: "",
+      major: "",
     }
   });
 
@@ -88,6 +89,7 @@ export default function AdminHiring() {
       standardExperience: pos.standardExperience,
       schoolYear: pos.schoolYear || "",
       levels: pos.levels || "",
+      major: pos.major || "",
     });
   };
 
@@ -151,7 +153,7 @@ export default function AdminHiring() {
                     </FormItem>
                   )} />
                 </div>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                   <FormField control={form.control} name="schoolYear" render={({ field }) => (
                     <FormItem>
                       <FormLabel>School Year (e.g. 2026-2027)</FormLabel>
@@ -172,6 +174,26 @@ export default function AdminHiring() {
                           <option value="IP Education">IP Education</option>
                           <option value="Special education">Special education</option>
                           <option value="NTP/Not Applicable">NTP/Not Applicable</option>
+                        </select>
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )} />
+                  <FormField control={form.control} name="major" render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Major (Optional)</FormLabel>
+                      <FormControl>
+                        <select {...field} className="w-full h-10 rounded-md border border-input bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2">
+                          <option value="">Select Major</option>
+                          <option value="english">English</option>
+                          <option value="Mathematics">Mathematics</option>
+                          <option value="filipino">Filipino</option>
+                          <option value="MAPEH">MAPEH</option>
+                          <option value="Araling panlipunan">Araling Panlipunan</option>
+                          <option value="EPP/TLE">EPP/TLE</option>
+                          <option value="Science">Science</option>
+                          <option value="Values">Values</option>
+                          <option value="other">Other</option>
                         </select>
                       </FormControl>
                       <FormMessage />
@@ -204,6 +226,7 @@ export default function AdminHiring() {
                   <TableHead>Position</TableHead>
                   <TableHead>SY</TableHead>
                   <TableHead>Level</TableHead>
+                  <TableHead>Major</TableHead>
                   <TableHead>SG</TableHead>
                   <TableHead>Salary</TableHead>
                   <TableHead>Standards (E/T/X)</TableHead>
@@ -216,6 +239,7 @@ export default function AdminHiring() {
                     <TableCell className="font-medium">{pos.position}</TableCell>
                     <TableCell>{pos.schoolYear}</TableCell>
                     <TableCell className="capitalize">{pos.levels}</TableCell>
+                    <TableCell className="capitalize">{pos.major || "-"}</TableCell>
                     <TableCell>{pos.salaryGrade}</TableCell>
                     <TableCell>{pos.monthlySalary}</TableCell>
                     <TableCell>{pos.standardEducation}/{pos.standardTraining}/{pos.standardExperience}</TableCell>
