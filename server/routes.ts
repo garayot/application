@@ -76,23 +76,29 @@ export async function registerRoutes(
       // Create IER automatically for initial screening
       const position = await storage.getPositionById(appCode.positionId);
       if (position) {
+        // Ensure values are numbers and default to 0 if NaN
+        const appEdu = parseInt(applicant.education);
+        const appTra = Number(applicant.training || 0);
+        const appExp = Number(applicant.experience || 0);
+        
+        const stdEdu = Number(position.standardEducation || 0);
+        const stdTra = Number(position.standardTraining || 0);
+        const stdExp = Number(position.standardExperience || 0);
+
+        const isQualified = 
+          (!isNaN(appEdu) && appEdu >= stdEdu) &&
+          (!isNaN(appTra) && appTra >= stdTra) &&
+          (!isNaN(appExp) && appExp >= stdExp);
+
         const ierData = {
           appCodeId: appCode.appCodeId,
           positionId: position.positionId,
           eligibility: applicant.eligibility,
-          remarks:
-            Number(applicant.education) >=
-              (Number(position.standardEducation) || 0) &&
-            (Number(applicant.training) || 0) >=
-              (Number(position.standardTraining) || 0) &&
-            (Number(applicant.experience) || 0) >=
-              (Number(position.standardExperience) || 0)
-              ? "qualified"
-              : ("disqualified" as any),
-          applicantEducation: Number(applicant.education),
-          applicantTraining: Number(applicant.training || 0),
-          applicantExperience: Number(applicant.experience || 0),
-          majorId: majorId || null,
+          remarks: isQualified ? "qualified" : ("disqualified" as any),
+          applicantEducation: isNaN(appEdu) ? 0 : appEdu,
+          applicantTraining: isNaN(appTra) ? 0 : appTra,
+          applicantExperience: isNaN(appExp) ? 0 : appExp,
+          majorId: majorId ? Number(majorId) : null,
         };
         await storage.createIER(ierData);
       }
