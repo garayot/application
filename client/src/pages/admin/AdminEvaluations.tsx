@@ -131,7 +131,7 @@ export default function AdminEvaluations() {
                           {(app.applicant.disability || app.applicant.ethnicGroup) && (
                             <div className="flex gap-2 pt-0.5">
                               {app.applicant.disability && <span><span className="font-medium">Disability:</span> {app.applicant.disability}</span>}
-                              {app.applicant.ethnicGroup && <span><span className="font-medium">Ethnic:</span> {app.applicant.ethnicGroup}</span>}
+                              {app.applicant.ethnicGroup && <span><span className="font-medium">Ethnicity:</span> {app.applicant.ethnicGroup}</span>}
                             </div>
                           )}
                         </div>
