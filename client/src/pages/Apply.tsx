@@ -72,11 +72,21 @@ export default function Apply() {
             <div key={pos.positionId} className="bg-white p-6 rounded-2xl border border-slate-200 hover:border-primary/50 hover:shadow-lg transition-all flex items-center justify-between">
               <div>
                 <h3 className="text-xl font-bold text-slate-900">{pos.position}</h3>
-                <div className="flex items-center gap-4 mt-2 text-sm text-slate-500">
+                <div className="flex flex-wrap items-center gap-3 mt-2 text-sm text-slate-500">
+                  {pos.schoolYear && (
+                    <span className="bg-blue-50 text-blue-700 px-2 py-1 rounded-md font-medium">
+                      SY {pos.schoolYear}
+                    </span>
+                  )}
+                  {pos.levels && (
+                    <span className="bg-purple-50 text-purple-700 px-2 py-1 rounded-md font-medium capitalize">
+                      {pos.levels}
+                    </span>
+                  )}
                   <span className="bg-slate-100 px-2 py-1 rounded-md text-slate-700 font-medium">
                     SG {pos.salaryGrade}
                   </span>
-                  <span>
+                  <span className="font-semibold text-slate-700">
                     ₱{Number(pos.monthlySalary).toLocaleString()} / month
                   </span>
                 </div>
