@@ -29,6 +29,8 @@ export default function AdminHiring() {
       standardEducation: 0,
       standardTraining: 0,
       standardExperience: 0,
+      schoolYear: "",
+      levels: "",
     }
   });
 
@@ -84,6 +86,8 @@ export default function AdminHiring() {
       standardEducation: pos.standardEducation,
       standardTraining: pos.standardTraining,
       standardExperience: pos.standardExperience,
+      schoolYear: pos.schoolYear || "",
+      levels: pos.levels || "",
     });
   };
 
@@ -147,6 +151,33 @@ export default function AdminHiring() {
                     </FormItem>
                   )} />
                 </div>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <FormField control={form.control} name="schoolYear" render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>School Year (e.g. 2026-2027)</FormLabel>
+                      <FormControl><Input {...field} /></FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )} />
+                  <FormField control={form.control} name="levels" render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Level</FormLabel>
+                      <FormControl>
+                        <select {...field} className="w-full h-10 rounded-md border border-input bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2">
+                          <option value="">Select Level</option>
+                          <option value="kinder">Kinder</option>
+                          <option value="elementary">Elementary</option>
+                          <option value="Junior High School">Junior High School</option>
+                          <option value="Senior High School">Senior High School</option>
+                          <option value="IP Education">IP Education</option>
+                          <option value="Special education">Special education</option>
+                          <option value="NTP/Not Applicable">NTP/Not Applicable</option>
+                        </select>
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )} />
+                </div>
                 <div className="flex gap-2">
                   <Button type="submit" className="flex items-center gap-2">
                     {editingId ? "Update Post" : <><Plus className="w-4 h-4" /> Post Hiring</>}
@@ -171,6 +202,8 @@ export default function AdminHiring() {
               <TableHeader>
                 <TableRow>
                   <TableHead>Position</TableHead>
+                  <TableHead>SY</TableHead>
+                  <TableHead>Level</TableHead>
                   <TableHead>SG</TableHead>
                   <TableHead>Salary</TableHead>
                   <TableHead>Standards (E/T/X)</TableHead>
@@ -181,6 +214,8 @@ export default function AdminHiring() {
                 {positions?.map((pos: any) => (
                   <TableRow key={pos.positionId}>
                     <TableCell className="font-medium">{pos.position}</TableCell>
+                    <TableCell>{pos.schoolYear}</TableCell>
+                    <TableCell className="capitalize">{pos.levels}</TableCell>
                     <TableCell>{pos.salaryGrade}</TableCell>
                     <TableCell>{pos.monthlySalary}</TableCell>
                     <TableCell>{pos.standardEducation}/{pos.standardTraining}/{pos.standardExperience}</TableCell>

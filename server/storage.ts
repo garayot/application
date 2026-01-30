@@ -161,6 +161,8 @@ export class DatabaseStorage implements IStorage {
         standardEducation: Number(data.standardEducation || 0),
         standardTraining: Number(data.standardTraining || 0),
         standardExperience: Number(data.standardExperience || 0),
+        schoolYear: data.schoolYear,
+        levels: data.levels,
       })
       .returning();
     return result;
@@ -179,6 +181,8 @@ export class DatabaseStorage implements IStorage {
       updateData.standardTraining = Number(data.standardTraining);
     if (data.standardExperience !== undefined)
       updateData.standardExperience = Number(data.standardExperience);
+    if (data.schoolYear !== undefined) updateData.schoolYear = data.schoolYear;
+    if (data.levels !== undefined) updateData.levels = data.levels;
 
     const [result] = await db
       .update(positions)
