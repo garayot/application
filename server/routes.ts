@@ -73,36 +73,6 @@ export async function registerRoutes(
         applicantCode: code,
       });
 
-      // Create IER automatically for initial screening
-      const position = await storage.getPositionById(appCode.positionId);
-      if (position) {
-        // Ensure values are numbers and default to 0 if NaN
-        const appEdu = parseInt(applicant.education);
-        const appTra = Number(applicant.training || 0);
-        const appExp = Number(applicant.experience || 0);
-        
-        const stdEdu = Number(position.standardEducation || 0);
-        const stdTra = Number(position.standardTraining || 0);
-        const stdExp = Number(position.standardExperience || 0);
-
-        const isQualified = 
-          (!isNaN(appEdu) && appEdu >= stdEdu) &&
-          (!isNaN(appTra) && appTra >= stdTra) &&
-          (!isNaN(appExp) && appExp >= stdExp);
-
-        const ierData = {
-          appCodeId: appCode.appCodeId,
-          positionId: position.positionId,
-          eligibility: applicant.eligibility,
-          remarks: isQualified ? "qualified" : ("disqualified" as any),
-          applicantEducation: isNaN(appEdu) ? 0 : appEdu,
-          applicantTraining: isNaN(appTra) ? 0 : appTra,
-          applicantExperience: isNaN(appExp) ? 0 : appExp,
-          majorId: majorId ? Number(majorId) : null,
-        };
-        await storage.createIER(ierData);
-      }
-
       res.status(201).json(appCode);
     } catch (e) {
       console.log(e);
