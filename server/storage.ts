@@ -6,6 +6,7 @@ import {
   asds,
   positions,
   schoolsDivisionOffice,
+  majors,
   applicationCodes,
   ier,
   ies,
@@ -20,6 +21,7 @@ import {
   type IES,
   type CAR,
   type Position,
+  type Major,
 } from "@shared/schema";
 import { eq, desc } from "drizzle-orm";
 
