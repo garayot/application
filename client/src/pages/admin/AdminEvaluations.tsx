@@ -18,9 +18,11 @@ import {
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Position, ApplicationCode, Applicant, IER } from "@shared/schema";
-import { Loader2, Search } from "lucide-react";
+import { Loader2, Search, Printer } from "lucide-react";
 import { Layout } from "@/components/layout/Sidebar";
 import { Link } from "wouter";
+import { Button } from "@/components/ui/button";
+import { IERPrint } from "@/components/IERPrint";
 
 type FullApplication = ApplicationCode & {
   applicant: Applicant;
@@ -49,16 +51,30 @@ export default function AdminEvaluations() {
     );
   }
 
+  const selectedPosition = positions?.find(p => p.positionId === Number(selectedPositionId));
+
   const filteredApps = applications?.filter(
-    (app) => !selectedPositionId || app.positionId === Number(selectedPositionId)
+    (app) => !selectedPositionId || selectedPositionId === "all" || app.positionId === Number(selectedPositionId)
   );
+
+  const handlePrint = () => {
+    window.print();
+  };
 
   return (
     <Layout>
       <div className="space-y-6">
-        <div>
-          <h1 className="text-3xl font-bold tracking-tight text-slate-900">Evaluations (IER)</h1>
-          <p className="text-slate-500 mt-1">Review and filter initial evaluation results for applicants.</p>
+        <div className="flex justify-between items-start">
+          <div>
+            <h1 className="text-3xl font-bold tracking-tight text-slate-900">Evaluations (IER)</h1>
+            <p className="text-slate-500 mt-1">Review and filter initial evaluation results for applicants.</p>
+          </div>
+          {selectedPositionId && selectedPositionId !== "all" && (
+            <Button onClick={handlePrint} className="flex items-center gap-2">
+              <Printer className="w-4 h-4" />
+              Print IER
+            </Button>
+          )}
         </div>
 
         <Card className="border-slate-200 shadow-sm">
@@ -87,6 +103,16 @@ export default function AdminEvaluations() {
             </div>
           </CardContent>
         </Card>
+
+        {/* Hidden Print Content */}
+        {selectedPositionId && selectedPositionId !== "all" && (
+          <div className="hidden">
+            <IERPrint 
+              applications={filteredApps || []} 
+              position={selectedPosition} 
+            />
+          </div>
+        )}
 
         {!selectedPositionId || selectedPositionId === "all" ? (
           <div className="flex flex-col items-center justify-center py-20 bg-slate-50 rounded-2xl border-2 border-dashed border-slate-200">
