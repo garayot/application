@@ -25,7 +25,7 @@ export async function registerRoutes(
 
   app.get(api.applicants.getProfile.path, async (req, res) => {
     if (!req.isAuthenticated()) return res.sendStatus(401);
-    const applicant = await storage.getApplicantByUserId(req.user!.id);
+    const applicant = await storage.getApplicantByUserId((req.user as any).id);
     if (!applicant) return res.sendStatus(404);
     res.json(applicant);
   });
@@ -34,7 +34,7 @@ export async function registerRoutes(
     if (!req.isAuthenticated()) return res.sendStatus(401);
 
     // Check if profile exists
-    let applicant = await storage.getApplicantByUserId(req.user!.id);
+    let applicant = await storage.getApplicantByUserId((req.user as any).id);
 
     try {
       const data = api.applicants.updateProfile.input.parse(req.body);
@@ -44,7 +44,7 @@ export async function registerRoutes(
       } else {
         applicant = await storage.createApplicantProfile({
           ...data,
-          userId: req.user!.id,
+          userId: (req.user as any).id,
         });
       }
       res.json(applicant);
@@ -56,7 +56,7 @@ export async function registerRoutes(
   // Applications
   app.post(api.applications.create.path, async (req, res) => {
     if (!req.isAuthenticated()) return res.sendStatus(401);
-    const applicant = await storage.getApplicantByUserId(req.user!.id);
+    const applicant = await storage.getApplicantByUserId((req.user as any).id);
     if (!applicant)
       return res
         .status(400)
@@ -106,7 +106,7 @@ export async function registerRoutes(
 
   app.get(api.applications.listMy.path, async (req, res) => {
     if (!req.isAuthenticated()) return res.sendStatus(401);
-    const applicant = await storage.getApplicantByUserId(req.user!.id);
+    const applicant = await storage.getApplicantByUserId((req.user as any).id);
     if (!applicant) return res.json([]);
 
     const apps = await storage.getApplicationsByApplicant(applicant.appId);
@@ -114,7 +114,7 @@ export async function registerRoutes(
   });
 
   app.get(api.applications.listAll.path, async (req, res) => {
-    if (!req.isAuthenticated() || req.user!.role !== "admin")
+    if (!req.isAuthenticated() || (req.user as any).role !== "admin")
       return res.sendStatus(403);
     const apps = await storage.getAllApplications();
     res.json(apps);
@@ -126,8 +126,8 @@ export async function registerRoutes(
     const fullApp = await storage.getApplicationById(Number(req.params.id));
     if (!fullApp) return res.sendStatus(404);
 
-    if (req.user?.role !== "admin") {
-      const applicant = await storage.getApplicantByUserId(req.user!.id);
+    if ((req.user as any).role !== "admin") {
+      const applicant = await storage.getApplicantByUserId((req.user as any).id);
       if (!applicant || applicant.appId !== fullApp.appId)
         return res.sendStatus(403);
     }
@@ -137,7 +137,7 @@ export async function registerRoutes(
 
   // IER (HR)
   app.post(api.ier.create.path, async (req, res) => {
-    if (!req.isAuthenticated() || req.user!.role !== "admin")
+    if (!req.isAuthenticated() || (req.user as any).role !== "admin")
       return res.sendStatus(403);
     const appCodeId = Number(req.params.id);
 
@@ -183,7 +183,7 @@ export async function registerRoutes(
 
   // Positions
   app.post("/api/positions", async (req, res) => {
-    if (!req.isAuthenticated() || req.user!.role !== "admin")
+    if (!req.isAuthenticated() || (req.user as any).role !== "admin")
       return res.sendStatus(403);
     try {
       const data = req.body;
@@ -198,7 +198,7 @@ export async function registerRoutes(
   });
 
   app.patch("/api/positions/:id", async (req, res) => {
-    if (!req.isAuthenticated() || req.user!.role !== "admin")
+    if (!req.isAuthenticated() || (req.user as any).role !== "admin")
       return res.sendStatus(403);
     try {
       const id = Number(req.params.id);
@@ -214,7 +214,7 @@ export async function registerRoutes(
   });
 
   app.delete("/api/positions/:id", async (req, res) => {
-    if (!req.isAuthenticated() || req.user!.role !== "admin")
+    if (!req.isAuthenticated() || (req.user as any).role !== "admin")
       return res.sendStatus(403);
     try {
       const id = Number(req.params.id);
@@ -227,7 +227,7 @@ export async function registerRoutes(
 
   // IES (HR)
   app.post(api.ies.create.path, async (req, res) => {
-    if (!req.isAuthenticated() || req.user!.role !== "admin")
+    if (!req.isAuthenticated() || (req.user as any).role !== "admin")
       return res.sendStatus(403);
     const ierId = Number(req.params.id);
 
@@ -246,7 +246,7 @@ export async function registerRoutes(
 
   // CAR (ASDS)
   app.post(api.car.create.path, async (req, res) => {
-    if (!req.isAuthenticated() || req.user!.role !== "admin")
+    if (!req.isAuthenticated() || (req.user as any).role !== "admin")
       return res.sendStatus(403);
     const iesId = Number(req.params.id);
 
@@ -288,7 +288,7 @@ export async function registerRoutes(
   });
 
   app.get(api.applicants.list.path, async (req, res) => {
-    if (!req.isAuthenticated() || req.user!.role !== "admin")
+    if (!req.isAuthenticated() || (req.user as any).role !== "admin")
       return res.sendStatus(403);
     const applicants = await storage.getAllApplicants();
     res.json(applicants);

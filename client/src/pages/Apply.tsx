@@ -52,7 +52,6 @@ export default function Apply() {
     }
 
     createApplication.mutate({
-      appId: profile.appId,
       positionId,
       majorId: selectedMajor ? Number(selectedMajor) : undefined,
     }, {
