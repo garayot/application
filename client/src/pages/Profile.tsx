@@ -127,6 +127,20 @@ export default function Profile() {
                         <FormMessage />
                       </FormItem>
                     )} />
+                    <FormField control={form.control} name="disability" render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Disability</FormLabel>
+                        <FormControl><Input {...field} placeholder="None or specify" /></FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )} />
+                    <FormField control={form.control} name="ethnicGroup" render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Ethnic Group</FormLabel>
+                        <FormControl><Input {...field} placeholder="e.g. Tagalog" /></FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )} />
                     <FormField control={form.control} name="religion" render={({ field }) => (
                       <FormItem>
                         <FormLabel>Religion</FormLabel>
