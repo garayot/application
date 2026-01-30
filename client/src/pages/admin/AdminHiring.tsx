@@ -179,26 +179,6 @@ export default function AdminHiring() {
                       <FormMessage />
                     </FormItem>
                   )} />
-                  <FormField control={form.control} name="major" render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Major (Optional)</FormLabel>
-                      <FormControl>
-                        <select {...field} className="w-full h-10 rounded-md border border-input bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2">
-                          <option value="">Select Major</option>
-                          <option value="english">English</option>
-                          <option value="Mathematics">Mathematics</option>
-                          <option value="filipino">Filipino</option>
-                          <option value="MAPEH">MAPEH</option>
-                          <option value="Araling panlipunan">Araling Panlipunan</option>
-                          <option value="EPP/TLE">EPP/TLE</option>
-                          <option value="Science">Science</option>
-                          <option value="Values">Values</option>
-                          <option value="other">Other</option>
-                        </select>
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )} />
                 </div>
                 <div className="flex gap-2">
                   <Button type="submit" className="flex items-center gap-2">
@@ -226,7 +206,6 @@ export default function AdminHiring() {
                   <TableHead>Position</TableHead>
                   <TableHead>SY</TableHead>
                   <TableHead>Level</TableHead>
-                  <TableHead>Major</TableHead>
                   <TableHead>SG</TableHead>
                   <TableHead>Salary</TableHead>
                   <TableHead>Standards (E/T/X)</TableHead>
@@ -239,7 +218,6 @@ export default function AdminHiring() {
                     <TableCell className="font-medium">{pos.position}</TableCell>
                     <TableCell>{pos.schoolYear}</TableCell>
                     <TableCell className="capitalize">{pos.levels}</TableCell>
-                    <TableCell className="capitalize">{pos.major || "-"}</TableCell>
                     <TableCell>{pos.salaryGrade}</TableCell>
                     <TableCell>{pos.monthlySalary}</TableCell>
                     <TableCell>{pos.standardEducation}/{pos.standardTraining}/{pos.standardExperience}</TableCell>

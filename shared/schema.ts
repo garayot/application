@@ -9,6 +9,12 @@ export const remarksEnum = pgEnum("remarks", ["qualified", "disqualified"]);
 export const biEnum = pgEnum("for_background_investigation", ["yes", "no"]);
 export const appStatusEnum = pgEnum("app_status", ["submitted", "qualified", "disqualified", "under_assessment", "finalized"]);
 
+// Majors
+export const majors = pgTable("majors", {
+  majorId: serial("major_id").primaryKey(),
+  name: text("name").notNull(),
+});
+
 // Users table for Authentication
 export const users = pgTable("users", {
   id: serial("id").primaryKey(),
@@ -71,7 +77,6 @@ export const positions = pgTable("positions", {
   standardExperience: integer("standard_experience").default(0),
   schoolYear: text("school_year"), // e.g., "2026-2027"
   levels: text("levels"), // kinder, elementary, etc.
-  major: text("major"), // for JHS specialized positions
 });
 
 // Schools Division Office
@@ -107,6 +112,7 @@ export const ier = pgTable("ier", {
   incrementEducation: integer("increment_education").default(0),
   incrementTraining: integer("increment_training").default(0),
   incrementExperience: integer("increment_experience").default(0),
+  majorId: integer("major_id").references(() => majors.majorId), // Applicant selected major for JHS
 });
 
 // IES (Initial Evaluation Sheet)
@@ -173,6 +179,7 @@ export const insertApplicantSchema = createInsertSchema(applicants).omit({ appId
 export const insertSecretariatSchema = createInsertSchema(secretariat).omit({ secId: true, userId: true });
 export const insertAsdsSchema = createInsertSchema(asds).omit({ asdsId: true, userId: true });
 export const insertPositionSchema = createInsertSchema(positions).omit({ positionId: true });
+export const insertMajorSchema = createInsertSchema(majors).omit({ majorId: true });
 export const insertSchoolSchema = createInsertSchema(schoolsDivisionOffice).omit({ schoolId: true });
 export const insertApplicationCodeSchema = createInsertSchema(applicationCodes).omit({ appCodeId: true, applicantCode: true, createdAt: true, status: true });
 export const insertIerSchema = createInsertSchema(ier).omit({ ierId: true });
@@ -182,6 +189,7 @@ export const insertCarSchema = createInsertSchema(car).omit({ carId: true });
 export type InsertUser = typeof users.$inferInsert;
 export type InsertApplicant = typeof applicants.$inferInsert;
 export type InsertPosition = typeof positions.$inferInsert;
+export type InsertMajor = typeof majors.$inferInsert;
 export type InsertSchool = typeof schoolsDivisionOffice.$inferInsert;
 export type InsertApplicationCode = typeof applicationCodes.$inferInsert;
 export type InsertIER = typeof ier.$inferInsert;
@@ -194,6 +202,7 @@ export type Applicant = typeof applicants.$inferSelect;
 export type Secretariat = typeof secretariat.$inferSelect;
 export type ASDS = typeof asds.$inferSelect;
 export type Position = typeof positions.$inferSelect;
+export type Major = typeof majors.$inferSelect;
 export type ApplicationCode = typeof applicationCodes.$inferSelect;
 export type IER = typeof ier.$inferSelect;
 export type IES = typeof ies.$inferSelect;

@@ -1,5 +1,5 @@
 import { Layout } from "@/components/layout/Sidebar";
-import { usePositions, useCreateApplication } from "@/hooks/use-applications";
+import { usePositions, useCreateApplication, useMajors } from "@/hooks/use-applications";
 import { useApplicantProfile } from "@/hooks/use-applicants";
 import { useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
@@ -7,13 +7,17 @@ import { useToast } from "@/hooks/use-toast";
 import { CheckCircle2, AlertCircle } from "lucide-react";
 import { StatusBadge } from "@/components/ui/StatusBadge";
 import { Link } from "wouter";
+import { useState } from "react";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 export default function Apply() {
   const { data: positions, isLoading } = usePositions();
+  const { data: majors } = useMajors();
   const { data: profile } = useApplicantProfile();
   const createApplication = useCreateApplication();
   const { toast } = useToast();
   const [, setLocation] = useLocation();
+  const [selectedMajor, setSelectedMajor] = useState<string | undefined>();
 
   if (isLoading) return <Layout><div>Loading positions...</div></Layout>;
 
@@ -37,10 +41,20 @@ export default function Apply() {
     );
   }
 
-  const handleApply = (positionId: number) => {
+  const handleApply = (positionId: number, posLevel: string) => {
+    if (posLevel === "Junior High School" && !selectedMajor) {
+      toast({
+        title: "Major Required",
+        description: "Please select a major for Junior High School level positions.",
+        variant: "destructive"
+      });
+      return;
+    }
+
     createApplication.mutate({
       appId: profile.appId,
       positionId,
+      majorId: selectedMajor ? Number(selectedMajor) : undefined,
     }, {
       onSuccess: () => {
         toast({
@@ -69,8 +83,8 @@ export default function Apply() {
 
         <div className="grid gap-4">
           {positions?.map((pos) => (
-            <div key={pos.positionId} className="bg-white p-6 rounded-2xl border border-slate-200 hover:border-primary/50 hover:shadow-lg transition-all flex items-center justify-between">
-              <div>
+            <div key={pos.positionId} className="bg-white p-6 rounded-2xl border border-slate-200 hover:border-primary/50 hover:shadow-lg transition-all flex flex-col md:flex-row md:items-center justify-between gap-4">
+              <div className="flex-1">
                 <h3 className="text-xl font-bold text-slate-900">{pos.position}</h3>
                 <div className="flex flex-wrap items-center gap-3 mt-2 text-sm text-slate-500">
                   {pos.schoolYear && (
@@ -80,7 +94,7 @@ export default function Apply() {
                   )}
                   {pos.levels && (
                     <span className="bg-purple-50 text-purple-700 px-2 py-1 rounded-md font-medium capitalize">
-                      {pos.levels} {pos.major && `(${pos.major})`}
+                      {pos.levels}
                     </span>
                   )}
                   <span className="bg-slate-100 px-2 py-1 rounded-md text-slate-700 font-medium">
@@ -90,11 +104,29 @@ export default function Apply() {
                     ₱{Number(pos.monthlySalary).toLocaleString()} / month
                   </span>
                 </div>
+
+                {pos.levels === "Junior High School" && (
+                  <div className="mt-4 max-w-xs">
+                    <label className="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1 block">Select Major</label>
+                    <Select onValueChange={setSelectedMajor} value={selectedMajor}>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Choose a major" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {majors?.map((major) => (
+                          <SelectItem key={major.majorId} value={major.majorId.toString()}>
+                            {major.name}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                )}
               </div>
               <Button 
-                onClick={() => handleApply(pos.positionId)}
+                onClick={() => handleApply(pos.positionId, pos.levels || "")}
                 disabled={createApplication.isPending}
-                className="rounded-xl px-6"
+                className="rounded-xl px-6 h-12"
               >
                 {createApplication.isPending ? "Submitting..." : "Apply Now"}
               </Button>

@@ -63,12 +63,12 @@ export async function registerRoutes(
         .json({ message: "Please complete your profile first" });
 
     try {
-      const data = api.applications.create.input.parse(req.body);
+      const { positionId, majorId } = api.applications.create.input.parse(req.body);
       // Generate Applicant Code (mock logic: APP-{Date}-{Random})
       const code = `APP-${Date.now().toString().slice(-6)}-${Math.floor(Math.random() * 1000)}`;
 
       const appCode = await storage.createApplication({
-        ...data,
+        positionId,
         appId: applicant.appId,
         applicantCode: code,
       });
@@ -92,6 +92,7 @@ export async function registerRoutes(
           applicantEducation: Number(applicant.education),
           applicantTraining: Number(applicant.training || 0),
           applicantExperience: Number(applicant.experience || 0),
+          majorId: majorId || null,
         };
         await storage.createIER(ierData);
       }
@@ -279,6 +280,11 @@ export async function registerRoutes(
   app.get(api.schools.list.path, async (req, res) => {
     const schools = await storage.getSchools();
     res.json(schools);
+  });
+
+  app.get(api.majors.list.path, async (req, res) => {
+    const majors = await storage.getMajors();
+    res.json(majors);
   });
 
   app.get(api.applicants.list.path, async (req, res) => {

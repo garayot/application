@@ -24,6 +24,17 @@ export function useSchools() {
   });
 }
 
+export function useMajors() {
+  return useQuery({
+    queryKey: [api.majors.list.path],
+    queryFn: async () => {
+      const res = await fetch(api.majors.list.path, { credentials: "include" });
+      if (!res.ok) throw new Error("Failed to fetch majors");
+      return api.majors.list.responses[200].parse(await res.json());
+    },
+  });
+}
+
 export function useMyApplications() {
   return useQuery({
     queryKey: [api.applications.listMy.path],

@@ -51,6 +51,7 @@ export interface IStorage {
   updatePosition(positionId: number, data: any): Promise<Position>;
   deletePosition(positionId: number): Promise<void>;
   getSchools(): Promise<any[]>;
+  getMajors(): Promise<Major[]>;
 
   // Applications
   createApplication(data: any): Promise<ApplicationCode>;
@@ -163,7 +164,6 @@ export class DatabaseStorage implements IStorage {
         standardExperience: Number(data.standardExperience || 0),
         schoolYear: data.schoolYear,
         levels: data.levels,
-        major: data.major,
       })
       .returning();
     return result;
@@ -184,7 +184,6 @@ export class DatabaseStorage implements IStorage {
       updateData.standardExperience = Number(data.standardExperience);
     if (data.schoolYear !== undefined) updateData.schoolYear = data.schoolYear;
     if (data.levels !== undefined) updateData.levels = data.levels;
-    if (data.major !== undefined) updateData.major = data.major;
 
     const [result] = await db
       .update(positions)
@@ -200,6 +199,10 @@ export class DatabaseStorage implements IStorage {
 
   async getSchools(): Promise<any[]> {
     return await db.select().from(schoolsDivisionOffice);
+  }
+
+  async getMajors(): Promise<Major[]> {
+    return await db.select().from(majors);
   }
 
   // Applications
@@ -466,7 +469,7 @@ export class DatabaseStorage implements IStorage {
     }
   }
 
-  async seedAdmin() {
+  async seedAdmin(): Promise<void> {
     const existing = await this.getUserByUsername("admin");
     if (!existing) {
       // Default admin (Secretariat/ASDS roles would need specific user accounts in real app, but for now generic admin)
@@ -485,6 +488,23 @@ export class DatabaseStorage implements IStorage {
         password: "password",
         role: "admin",
       });
+    }
+  }
+
+  async seedMajors() {
+    const count = await db.select().from(majors);
+    if (count.length === 0) {
+      await db.insert(majors).values([
+        { name: "English" },
+        { name: "Mathematics" },
+        { name: "Filipino" },
+        { name: "MAPEH" },
+        { name: "Araling Panlipunan" },
+        { name: "EPP/TLE" },
+        { name: "Science" },
+        { name: "Values" },
+        { name: "Other" },
+      ]);
     }
   }
 }

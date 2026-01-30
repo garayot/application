@@ -103,7 +103,10 @@ export const api = {
     create: {
       method: "POST" as const,
       path: "/api/applications",
-      input: insertApplicationCodeSchema,
+      input: z.object({
+        positionId: z.number(),
+        majorId: z.number().optional(),
+      }),
       responses: {
         201: z.custom<typeof applicationCodes.$inferSelect>(),
         400: errorSchemas.validation,
@@ -186,6 +189,15 @@ export const api = {
       path: "/api/schools",
       responses: {
         200: z.array(z.object({ schoolId: z.number(), name: z.string(), address: z.string() })),
+      }
+    }
+  },
+  majors: {
+    list: {
+      method: "GET" as const,
+      path: "/api/majors",
+      responses: {
+        200: z.array(z.object({ majorId: z.number(), name: z.string() })),
       }
     }
   }
