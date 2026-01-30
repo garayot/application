@@ -239,6 +239,7 @@ export class DatabaseStorage implements IStorage {
         appCode: applicationCodes,
         applicant: applicants,
         position: positions,
+        ier: ier,
       })
       .from(applicationCodes)
       .innerJoin(applicants, eq(applicationCodes.appId, applicants.appId))
@@ -246,12 +247,14 @@ export class DatabaseStorage implements IStorage {
         positions,
         eq(applicationCodes.positionId, positions.positionId),
       )
+      .leftJoin(ier, eq(applicationCodes.appCodeId, ier.appCodeId))
       .orderBy(desc(applicationCodes.createdAt));
 
     return result.map((r) => ({
       ...r.appCode,
       applicant: r.applicant,
       position: r.position,
+      ier: r.ier,
     }));
   }
 

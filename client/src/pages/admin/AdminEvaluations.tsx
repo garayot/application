@@ -141,12 +141,12 @@ export default function AdminEvaluations() {
                       <TableCell className="text-center font-medium">{app.applicant.experience}m</TableCell>
                       <TableCell className="text-slate-700">{app.applicant.eligibility}</TableCell>
                       <TableCell className="text-right">
-                        {app.status === "qualified" || app.status === "disqualified" ? (
+                        {app.ier?.remarks ? (
                           <Badge 
-                            variant={app.status === "qualified" ? "default" : "destructive"}
-                            className={app.status === "qualified" ? "bg-green-100 text-green-700 hover:bg-green-100 border-green-200" : ""}
+                            variant={app.ier.remarks === "qualified" ? "default" : "destructive"}
+                            className={app.ier.remarks === "qualified" ? "bg-green-100 text-green-700 hover:bg-green-100 border-green-200" : ""}
                           >
-                            {app.status.toUpperCase()}
+                            {app.ier.remarks.toUpperCase()}
                           </Badge>
                         ) : (
                           <span className="text-slate-400 text-xs italic bg-slate-100 px-2 py-1 rounded">Pending IER</span>
