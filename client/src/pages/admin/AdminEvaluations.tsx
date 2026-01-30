@@ -20,6 +20,7 @@ import { Badge } from "@/components/ui/badge";
 import { Position, ApplicationCode, Applicant, IER } from "@shared/schema";
 import { Loader2, Search } from "lucide-react";
 import { Layout } from "@/components/layout/Sidebar";
+import { Link } from "wouter";
 
 type FullApplication = ApplicationCode & {
   applicant: Applicant;
@@ -103,9 +104,9 @@ export default function AdminEvaluations() {
                     <TableHead className="font-semibold text-slate-900">App Code</TableHead>
                     <TableHead className="font-semibold text-slate-900">Applicant Name</TableHead>
                     <TableHead className="font-semibold text-slate-900">Personal Information</TableHead>
-                    <TableHead className="font-semibold text-slate-900 text-center">Edu</TableHead>
-                    <TableHead className="font-semibold text-slate-900 text-center">Tra</TableHead>
-                    <TableHead className="font-semibold text-slate-900 text-center">Exp</TableHead>
+                    <TableHead className="font-semibold text-slate-900 text-center">Education</TableHead>
+                    <TableHead className="font-semibold text-slate-900 text-center">Training</TableHead>
+                    <TableHead className="font-semibold text-slate-900 text-center">Experience</TableHead>
                     <TableHead className="font-semibold text-slate-900">Eligibility</TableHead>
                     <TableHead className="font-semibold text-slate-900 text-right">Remarks</TableHead>
                   </TableRow>
@@ -151,6 +152,14 @@ export default function AdminEvaluations() {
                           <span className="text-slate-400 text-xs italic bg-slate-100 px-2 py-1 rounded">Pending IER</span>
                         )}
                       </TableCell>
+                      <td className="px-6 py-4 text-right">
+                        <Link
+                          href={`/admin/application/${app.appCodeId}`}
+                          className="text-primary font-medium hover:underline"
+                        >
+                          View
+                        </Link>
+                      </td>
                     </TableRow>
                   ))}
                   {filteredApps?.length === 0 && (
