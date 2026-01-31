@@ -14,12 +14,12 @@ export default function Dashboard() {
   return (
     <Layout>
       <div className="flex flex-col gap-8">
-        <header className="flex justify-between items-end">
+        <header className="flex flex-col sm:flex-row justify-between items-start sm:items-end gap-4">
           <div>
-            <h1 className="text-3xl font-display font-bold text-slate-900">Dashboard</h1>
+            <h1 className="text-2xl md:text-3xl font-display font-bold text-slate-900">Dashboard</h1>
             <p className="text-slate-500 mt-1">Welcome back, {user.username}. Track your applications here.</p>
           </div>
-          <Link href="/apply" className="flex items-center gap-2 bg-primary text-white px-5 py-2.5 rounded-xl font-semibold hover:bg-primary/90 shadow-lg shadow-primary/25 transition-all">
+          <Link href="/apply" className="w-full sm:w-auto flex items-center justify-center gap-2 bg-primary text-white px-5 py-2.5 rounded-xl font-semibold hover:bg-primary/90 shadow-lg shadow-primary/25 transition-all">
             <Plus className="w-5 h-5" />
             New Application
           </Link>

@@ -46,13 +46,25 @@ export default function AdminDashboard() {
   return (
     <Layout>
       <div className="space-y-8">
-        <div>
-          <h1 className="text-3xl font-display font-bold text-slate-900">
-            Dashboard Overview
-          </h1>
-          <p className="text-slate-500 mt-1">
-            Manage applications and assessments.
-          </p>
+        <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
+          <div>
+            <h1 className="text-2xl md:text-3xl font-display font-bold text-slate-900">
+              Dashboard Overview
+            </h1>
+            <p className="text-slate-500 mt-1">
+              Manage applications and assessments.
+            </p>
+          </div>
+          <div className="relative w-full md:w-80">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+            <Input
+              placeholder="Search code or name..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="pl-9"
+              data-testid="input-search-applicants"
+            />
+          </div>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">

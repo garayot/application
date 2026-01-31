@@ -43,19 +43,19 @@ export default function Home() {
         <div className="absolute top-40 -left-20 w-72 h-72 bg-blue-400/20 rounded-full blur-3xl" />
       </div>
 
-      <div className="relative z-10 w-full max-w-5xl grid grid-cols-1 md:grid-cols-2 gap-8 p-6">
+      <div className="relative z-10 w-full max-w-5xl grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-16 p-6">
         {/* Left Side: Branding */}
-        <div className="flex flex-col justify-center space-y-6">
-          <div className="w-16 h-16 bg-primary rounded-2xl flex items-center justify-center text-white shadow-xl shadow-primary/30">
+        <div className="flex flex-col justify-center space-y-6 lg:text-left text-center">
+          <div className="w-16 h-16 bg-primary rounded-2xl flex items-center justify-center text-white shadow-xl shadow-primary/30 mx-auto lg:mx-0">
             <Building2 className="w-8 h-8" />
           </div>
-          <h1 className="font-display font-bold text-5xl text-slate-900 leading-tight">
+          <h1 className="font-display font-bold text-4xl md:text-5xl lg:text-6xl text-slate-900 leading-tight">
             Join the <span className="text-primary">Schools Division</span> Workforce
           </h1>
-          <p className="text-lg text-slate-600 max-w-md leading-relaxed">
+          <p className="text-base md:text-lg text-slate-600 max-w-md leading-relaxed mx-auto lg:mx-0">
             The modern, streamlined application tracking system for educational professionals. Apply for positions, track your status, and grow your career.
           </p>
-          <div className="flex items-center gap-4 text-sm font-medium text-slate-500">
+          <div className="flex flex-wrap items-center justify-center lg:justify-start gap-4 text-sm font-medium text-slate-500">
             <div className="flex items-center gap-2">
               <div className="w-2 h-2 rounded-full bg-green-500" />
               Transparent
