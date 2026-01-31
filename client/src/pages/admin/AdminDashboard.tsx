@@ -2,12 +2,15 @@ import { Layout } from "@/components/layout/Sidebar";
 import { useAllApplications } from "@/hooks/use-applications";
 import { StatusBadge } from "@/components/ui/StatusBadge";
 import { Link } from "wouter";
-import { Users, FileCheck, ClipboardList, TrendingUp } from "lucide-react";
+import { Search } from "lucide-react";
 import { useUser } from "@/hooks/use-auth";
+import { useState } from "react";
+import { Input } from "@/components/ui/input";
 
 export default function AdminDashboard() {
   const { user } = useUser();
   const { data: applications, isLoading } = useAllApplications();
+  const [searchTerm, setSearchTerm] = useState("");
 
   if (isLoading || !user)
     return (
@@ -16,62 +19,36 @@ export default function AdminDashboard() {
       </Layout>
     );
 
-  const stats = [
-    {
-      label: "Total Applicants",
-      value: applications?.length || 0,
-      icon: Users,
-      color: "text-blue-600 bg-blue-50",
-    },
-    {
-      label: "Pending Review",
-      value: applications?.filter((a) => a.status === "submitted").length || 0,
-      icon: FileCheck,
-      color: "text-orange-600 bg-orange-50",
-    },
-    {
-      label: "Qualified",
-      value: applications?.filter((a) => a.status === "qualified").length || 0,
-      icon: ClipboardList,
-      color: "text-green-600 bg-green-50",
-    },
-    {
-      label: "Finalized",
-      value: applications?.filter((a) => a.status === "finalized").length || 0,
-      icon: TrendingUp,
-      color: "text-purple-600 bg-purple-50",
-    },
-  ];
+  const filteredApplications = applications?.filter((app) => {
+    const searchLower = searchTerm.toLowerCase();
+    return (
+      app.applicantCode?.toLowerCase().includes(searchLower) ||
+      app.applicant.name.toLowerCase().includes(searchLower)
+    );
+  });
 
   return (
     <Layout>
       <div className="space-y-8">
-        <div>
-          <h1 className="text-3xl font-display font-bold text-slate-900">
-            Admin Overview
-          </h1>
-          <p className="text-slate-500 mt-1">
-            Manage applications and assessments.
-          </p>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          {stats.map((stat, idx) => (
-            <div
-              key={idx}
-              className="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm"
-            >
-              <div
-                className={`w-10 h-10 rounded-lg flex items-center justify-center mb-4 ${stat.color}`}
-              >
-                <stat.icon className="w-5 h-5" />
-              </div>
-              <p className="text-slate-500 text-sm font-medium">{stat.label}</p>
-              <h3 className="text-3xl font-bold text-slate-900 mt-1">
-                {stat.value}
-              </h3>
-            </div>
-          ))}
+        <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
+          <div>
+            <h1 className="text-3xl font-display font-bold text-slate-900">
+              Admin Overview
+            </h1>
+            <p className="text-slate-500 mt-1">
+              Manage applications and assessments.
+            </p>
+          </div>
+          <div className="relative w-full md:w-80">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+            <Input
+              placeholder="Search code or name..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="pl-9"
+              data-testid="input-search-applicants"
+            />
+          </div>
         </div>
 
         <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
@@ -94,7 +71,7 @@ export default function AdminDashboard() {
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100">
-                {applications?.map((app) => (
+                {filteredApplications?.map((app) => (
                   <tr key={app.appCodeId} className="hover:bg-slate-50">
                     <td className="px-6 py-4 font-mono text-slate-500">
                       {app.applicantCode}
@@ -114,6 +91,7 @@ export default function AdminDashboard() {
                       <Link
                         href={`/admin/application/${app.appCodeId}`}
                         className="text-primary font-medium hover:underline"
+                        data-testid={`link-view-application-${app.appCodeId}`}
                       >
                         View
                       </Link>
