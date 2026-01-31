@@ -77,6 +77,7 @@ export const positions = pgTable("positions", {
   standardExperience: integer("standard_experience").default(0),
   schoolYear: text("school_year"), // e.g., "2026-2027"
   levels: text("levels"), // kinder, elementary, etc.
+  isActive: boolean("is_active").default(true).notNull(),
 });
 
 // Schools Division Office

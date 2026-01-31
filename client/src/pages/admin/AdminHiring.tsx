@@ -9,10 +9,12 @@ import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Pencil, Trash2, Plus } from "lucide-react";
+import { Pencil, Trash2, Plus, Power, PowerOff } from "lucide-react";
 import { useState } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { apiRequest } from "@/lib/queryClient";
+import { Switch } from "@/components/ui/switch";
+import { Badge } from "@/components/ui/badge";
 
 export default function AdminHiring() {
   const { data: positions, isLoading } = usePositions();
@@ -31,7 +33,7 @@ export default function AdminHiring() {
       standardExperience: 0,
       schoolYear: "",
       levels: "",
-      major: "",
+      isActive: true,
     }
   });
 
@@ -57,6 +59,17 @@ export default function AdminHiring() {
       setEditingId(null);
       form.reset();
       toast({ title: "Position updated successfully" });
+    }
+  });
+
+  const toggleStatusMutation = useMutation({
+    mutationFn: async ({ id, isActive }: { id: number, isActive: boolean }) => {
+      const res = await apiRequest("PATCH", `/api/positions/${id}`, { isActive });
+      return res.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/positions"] });
+      toast({ title: "Status updated" });
     }
   });
 
@@ -89,7 +102,7 @@ export default function AdminHiring() {
       standardExperience: pos.standardExperience,
       schoolYear: pos.schoolYear || "",
       levels: pos.levels || "",
-      major: pos.major || "",
+      isActive: pos.isActive,
     });
   };
 
@@ -179,6 +192,17 @@ export default function AdminHiring() {
                       <FormMessage />
                     </FormItem>
                   )} />
+                  <FormField control={form.control} name="isActive" render={({ field }) => (
+                    <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
+                      <div className="space-y-0.5">
+                        <FormLabel className="text-base">Active Status</FormLabel>
+                        <p className="text-sm text-muted-foreground">Applicants can see active posts.</p>
+                      </div>
+                      <FormControl>
+                        <Switch checked={field.value} onCheckedChange={field.onChange} />
+                      </FormControl>
+                    </FormItem>
+                  )} />
                 </div>
                 <div className="flex gap-2">
                   <Button type="submit" className="flex items-center gap-2">
@@ -197,32 +221,42 @@ export default function AdminHiring() {
 
         <Card>
           <CardHeader>
-            <CardTitle>Active Hiring Posts</CardTitle>
+            <CardTitle>Hiring Posts</CardTitle>
           </CardHeader>
           <CardContent>
             <Table>
               <TableHeader>
                 <TableRow>
+                  <TableHead>Status</TableHead>
                   <TableHead>Position</TableHead>
                   <TableHead>SY</TableHead>
                   <TableHead>Level</TableHead>
-                  <TableHead>SG</TableHead>
                   <TableHead>Salary</TableHead>
-                  <TableHead>Standards (E/T/X)</TableHead>
                   <TableHead className="text-right">Actions</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
                 {positions?.map((pos: any) => (
                   <TableRow key={pos.positionId}>
+                    <TableCell>
+                      <Badge variant={pos.isActive ? "default" : "secondary"}>
+                        {pos.isActive ? "Active" : "Inactive"}
+                      </Badge>
+                    </TableCell>
                     <TableCell className="font-medium">{pos.position}</TableCell>
                     <TableCell>{pos.schoolYear}</TableCell>
                     <TableCell className="capitalize">{pos.levels}</TableCell>
-                    <TableCell>{pos.salaryGrade}</TableCell>
-                    <TableCell>{pos.monthlySalary}</TableCell>
-                    <TableCell>{pos.standardEducation}/{pos.standardTraining}/{pos.standardExperience}</TableCell>
+                    <TableCell>₱{Number(pos.monthlySalary).toLocaleString()}</TableCell>
                     <TableCell className="text-right">
                       <div className="flex justify-end gap-2">
+                        <Button 
+                          size="icon" 
+                          variant="ghost" 
+                          title={pos.isActive ? "Deactivate" : "Activate"}
+                          onClick={() => toggleStatusMutation.mutate({ id: pos.positionId, isActive: !pos.isActive })}
+                        >
+                          {pos.isActive ? <PowerOff className="w-4 h-4 text-orange-600" /> : <Power className="w-4 h-4 text-green-600" />}
+                        </Button>
                         <Button size="icon" variant="ghost" onClick={() => handleEdit(pos)}>
                           <Pencil className="w-4 h-4" />
                         </Button>

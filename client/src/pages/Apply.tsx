@@ -81,7 +81,7 @@ export default function Apply() {
         </div>
 
         <div className="grid gap-4">
-          {positions?.map((pos) => (
+          {positions?.filter(p => p.isActive).map((pos) => (
             <div key={pos.positionId} className="bg-white p-6 rounded-2xl border border-slate-200 hover:border-primary/50 hover:shadow-lg transition-all flex flex-col md:flex-row md:items-center justify-between gap-4">
               <div className="flex-1">
                 <h3 className="text-xl font-bold text-slate-900">{pos.position}</h3>
