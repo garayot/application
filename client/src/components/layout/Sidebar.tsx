@@ -1,16 +1,16 @@
 import { Link, useLocation } from "wouter";
 import { useUser, useLogout } from "@/hooks/use-auth";
-import { 
-  LayoutDashboard, 
-  UserCircle, 
-  FileText, 
-  Files, 
-  LogOut, 
+import {
+  LayoutDashboard,
+  UserCircle,
+  FileText,
+  Files,
+  LogOut,
   Building2,
   CheckSquare,
   ClipboardCheck,
   Award,
-  Briefcase
+  Briefcase,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -34,8 +34,16 @@ export function Sidebar() {
     { href: "/admin/dashboard", icon: LayoutDashboard, label: "Dashboard" },
     { href: "/admin/applicants", icon: UserCircle, label: "Applicants" },
     { href: "/admin/hiring", icon: Briefcase, label: "Post Hiring" },
-    { href: "/admin/evaluations", icon: CheckSquare, label: "Evaluations (IER)" },
-    { href: "/admin/assessments", icon: ClipboardCheck, label: "Assessments (IES)" },
+    {
+      href: "/admin/evaluations",
+      icon: CheckSquare,
+      label: "Evaluations (IER)",
+    },
+    {
+      href: "/admin/assessments",
+      icon: ClipboardCheck,
+      label: "Assessments (IES)",
+    },
     { href: "/admin/final", icon: Award, label: "Final (CAR)" },
   ];
 
@@ -49,8 +57,12 @@ export function Sidebar() {
             <Building2 className="w-6 h-6" />
           </div>
           <div>
-            <h1 className="font-display font-bold text-lg leading-tight text-slate-900">EduHiring</h1>
-            <p className="text-xs text-slate-500 font-medium">Division Office</p>
+            <h1 className="font-display font-bold text-lg leading-tight text-slate-900">
+              EduHiring
+            </h1>
+            <p className="text-xs text-slate-500 font-medium">
+              Bislig City Division Office
+            </p>
           </div>
         </div>
       </div>
@@ -59,16 +71,24 @@ export function Sidebar() {
         {links.map((link) => {
           const isActive = location === link.href;
           return (
-            <Link key={link.href} href={link.href} className={cn(
-              "flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200 group font-medium",
-              isActive 
-                ? "bg-primary/10 text-primary shadow-sm" 
-                : "text-slate-600 hover:bg-slate-50 hover:text-slate-900"
-            )}>
-              <link.icon className={cn(
-                "w-5 h-5 transition-colors",
-                isActive ? "text-primary" : "text-slate-400 group-hover:text-slate-600"
-              )} />
+            <Link
+              key={link.href}
+              href={link.href}
+              className={cn(
+                "flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200 group font-medium",
+                isActive
+                  ? "bg-primary/10 text-primary shadow-sm"
+                  : "text-slate-600 hover:bg-slate-50 hover:text-slate-900",
+              )}
+            >
+              <link.icon
+                className={cn(
+                  "w-5 h-5 transition-colors",
+                  isActive
+                    ? "text-primary"
+                    : "text-slate-400 group-hover:text-slate-600",
+                )}
+              />
               {link.label}
             </Link>
           );
@@ -81,11 +101,13 @@ export function Sidebar() {
             {user.username.slice(0, 2).toUpperCase()}
           </div>
           <div className="flex-1 min-w-0">
-            <p className="text-sm font-semibold text-slate-900 truncate">{user.username}</p>
+            <p className="text-sm font-semibold text-slate-900 truncate">
+              {user.username}
+            </p>
             <p className="text-xs text-slate-500 capitalize">{user.role}</p>
           </div>
         </div>
-        <button 
+        <button
           onClick={() => logout.mutate()}
           disabled={logout.isPending}
           className="w-full flex items-center gap-2 px-4 py-2 text-sm text-red-600 hover:bg-red-50 rounded-lg transition-colors font-medium"
