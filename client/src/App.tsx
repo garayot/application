@@ -13,6 +13,7 @@ import Profile from "@/pages/Profile";
 import Apply from "@/pages/Apply";
 import ApplicationDetail from "@/pages/ApplicationDetail";
 import AdminDashboard from "@/pages/admin/AdminDashboard";
+import AdminApplicants from "@/pages/admin/AdminApplicants"
 import AdminHiring from "@/pages/admin/AdminHiring";
 import AdminApplicationDetail from "@/pages/admin/AdminApplicationDetail";
 import AdminEvaluations from "@/pages/admin/AdminEvaluations";
@@ -83,7 +84,7 @@ function Router() {
 
       {/* Aliases for admin sidebar */}
       <Route path="/admin/applicants">
-        <ProtectedRoute component={AdminDashboard} adminOnly />
+        <ProtectedRoute component={AdminApplicants} adminOnly />
       </Route>
       <Route path="/admin/evaluations">
         <ProtectedRoute component={AdminEvaluations} adminOnly />
