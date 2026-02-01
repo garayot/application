@@ -55,7 +55,7 @@ export default function AdminAssessments() {
   const filteredApps = applications?.filter(
     (app) => 
       app.ies && 
-      (!selectedPositionId || selectedPositionId === "all" || app.positionId === Number(selectedPositionId))
+      (!selectedPositionId || selectedPositionId === "" || selectedPositionId === "all" || app.positionId === Number(selectedPositionId))
   );
 
   const handlePrint = () => {
