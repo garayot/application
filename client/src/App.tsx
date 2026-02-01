@@ -17,6 +17,7 @@ import AdminApplicants from "@/pages/admin/AdminApplicants"
 import AdminHiring from "@/pages/admin/AdminHiring";
 import AdminApplicationDetail from "@/pages/admin/AdminApplicationDetail";
 import AdminEvaluations from "@/pages/admin/AdminEvaluations";
+import AdminAssessments from "@/pages/admin/AdminAssessments";
 
 function ProtectedRoute({
   component: Component,
@@ -90,7 +91,7 @@ function Router() {
         <ProtectedRoute component={AdminEvaluations} adminOnly />
       </Route>
       <Route path="/admin/assessments">
-        <ProtectedRoute component={AdminDashboard} adminOnly />
+        <ProtectedRoute component={AdminAssessments} adminOnly />
       </Route>
       <Route path="/admin/final">
         <ProtectedRoute component={AdminDashboard} adminOnly />
