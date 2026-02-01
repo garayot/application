@@ -6,14 +6,13 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { CheckCircle2, AlertCircle, Clock, Printer } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { IESTemplate } from "@/components/print/IESTemplate";
 
 export default function ApplicationDetail() {
   const [, params] = useRoute("/application/:id");
   const id = Number(params?.id);
   const { data: app, isLoading } = useApplication(id);
 
-  const handlePrintCAR = () => {
+  const handlePrint = () => {
     window.print();
   };
 
@@ -23,11 +22,8 @@ export default function ApplicationDetail() {
   return (
     <Layout>
       <div className="max-w-5xl mx-auto pb-20">
-        {/* Print Template (Hidden by default, shown during print via CSS in template) */}
-        {app.ies && <IESTemplate application={app} />}
-
-        {/* Print Only Header for CAR */}
-        <div className="hidden print:hidden mb-8 border-b-2 border-slate-900 pb-4">
+        {/* Print Only Header */}
+        <div className="hidden print:block mb-8 border-b-2 border-slate-900 pb-4">
           <h1 className="text-2xl font-bold uppercase text-center">Comparative Assessment Result (CAR)</h1>
           <div className="grid grid-cols-2 gap-4 mt-6">
             <div>
@@ -41,32 +37,64 @@ export default function ApplicationDetail() {
         </div>
 
         {/* Header */}
-        <div className="flex flex-col sm:flex-row justify-between items-start gap-4 mb-8 print:hidden">
+        <div className="flex justify-between items-start mb-8 print:hidden">
           <div>
             <div className="flex items-center gap-3 mb-2">
               <StatusBadge status={app.status} className="text-sm px-3 py-1" />
               <span className="text-slate-400 text-sm font-mono">{app.applicantCode}</span>
             </div>
-            <h1 className="text-2xl md:text-3xl font-display font-bold text-slate-900">{app.position.position}</h1>
+            <h1 className="text-3xl font-display font-bold text-slate-900">{app.position.position}</h1>
             <p className="text-slate-500 text-lg">Application Progress</p>
           </div>
-          <div className="flex flex-wrap gap-2 w-full sm:w-auto">
-            {app.ies && (
-              <Button onClick={() => window.print()} variant="outline" className="flex-1 sm:flex-none items-center gap-2">
-                <Printer className="w-4 h-4" />
-                Print IES
-              </Button>
-            )}
-            {app.car && (
-              <Button onClick={handlePrintCAR} className="flex-1 sm:flex-none items-center gap-2">
-                <Printer className="w-4 h-4" />
-                Print CAR
-              </Button>
-            )}
-          </div>
+          {app.car && (
+            <Button onClick={handlePrint} className="flex items-center gap-2">
+              <Printer className="w-4 h-4" />
+              Print CAR
+            </Button>
+          )}
         </div>
 
         <div className="space-y-8">
+          {/* Print Only Table */}
+          <div className="hidden print:block">
+            <table className="w-full border-collapse border border-slate-900 text-xs">
+              <thead>
+                <tr className="bg-slate-100">
+                  <th className="border border-slate-900 p-2 text-left">Applicant Code</th>
+                  <th className="border border-slate-900 p-2 text-left">Applicant Name</th>
+                  <th className="border border-slate-900 p-2 text-center">Edu (10)</th>
+                  <th className="border border-slate-900 p-2 text-center">Tra (10)</th>
+                  <th className="border border-slate-900 p-2 text-center">Exp (10)</th>
+                  <th className="border border-slate-900 p-2 text-center">PBET/LET/LPT (10)</th>
+                  <th className="border border-slate-900 p-2 text-center">Obs (35)</th>
+                  <th className="border border-slate-900 p-2 text-center">Non Class Obs (25)</th>
+                  <th className="border border-slate-900 p-2 text-center">Total</th>
+                  <th className="border border-slate-900 p-2 text-left">Remarks</th>
+                  <th className="border border-slate-900 p-2 text-left">For BI</th>
+                  <th className="border border-slate-900 p-2 text-left">Appointment</th>
+                  <th className="border border-slate-900 p-2 text-left">Status of Appt</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td className="border border-slate-900 p-2">{app.applicantCode}</td>
+                  <td className="border border-slate-900 p-2 font-bold">{app.applicant.name}</td>
+                  <td className="border border-slate-900 p-2 text-center">{app.ies?.education}</td>
+                  <td className="border border-slate-900 p-2 text-center">{app.ies?.training}</td>
+                  <td className="border border-slate-900 p-2 text-center">{app.ies?.experience}</td>
+                  <td className="border border-slate-900 p-2 text-center">{(app.ies as any)?.pbetLetLptRating}</td>
+                  <td className="border border-slate-900 p-2 text-center">{app.ies?.classObs}</td>
+                  <td className="border border-slate-900 p-2 text-center">{(app.ies as any)?.nonClassObs}</td>
+                  <td className="border border-slate-900 p-2 text-center font-bold">{app.ies?.actualScore}</td>
+                  <td className="border border-slate-900 p-2">{app.car?.remarks || "N/A"}</td>
+                  <td className="border border-slate-900 p-2 capitalize">{app.car?.forBi}</td>
+                  <td className="border border-slate-900 p-2">{app.car?.forAppointment || "N/A"}</td>
+                  <td className="border border-slate-900 p-2">{app.car?.statusOfAppointment || "N/A"}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
           <div className="print:hidden space-y-8">
             {/* IER Results */}
             <section>
@@ -110,9 +138,7 @@ export default function ApplicationDetail() {
                 </h2>
                 {app.ies ? (
                   <Card className="bg-white border-slate-200 shadow-sm">
-                    <CardHeader className="flex flex-row items-center justify-between gap-2">
-                      <CardTitle className="text-lg">Score Breakdown</CardTitle>
-                    </CardHeader>
+                    <CardHeader><CardTitle className="text-lg">Score Breakdown</CardTitle></CardHeader>
                     <CardContent>
                       <div className="grid grid-cols-2 md:grid-cols-3 gap-6 mb-6">
                         <ScoreItem label="Education" score={app.ies.education} max={10} />
@@ -199,3 +225,4 @@ function DataField({ label, value }: { label: string, value: any }) {
     </div>
   );
 }
+
