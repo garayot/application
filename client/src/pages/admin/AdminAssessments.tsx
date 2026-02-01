@@ -18,7 +18,7 @@ import {
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Position, ApplicationCode, Applicant, IER, IES } from "@shared/schema";
-import { Loader2, Search, Printer, Calculator } from "lucide-react";
+import { Loader2, Search, Printer, Calculator, ArrowUpDown, ArrowUp, ArrowDown } from "lucide-react";
 import { Layout } from "@/components/layout/Sidebar";
 import { Link } from "wouter";
 import { Button } from "@/components/ui/button";
@@ -30,8 +30,11 @@ type FullApplication = ApplicationCode & {
   ies?: IES;
 };
 
+type SortOrder = "asc" | "desc" | null;
+
 export default function AdminAssessments() {
   const [selectedPositionId, setSelectedPositionId] = useState<string>("");
+  const [sortOrder, setSortOrder] = useState<SortOrder>(null);
 
   const { data: positions, isLoading: loadingPositions } = useQuery<Position[]>({
     queryKey: ["/api/positions"],
@@ -52,14 +55,37 @@ export default function AdminAssessments() {
   }
 
   // Filter for applicants who have already calculated and submitted (IES exists)
-  const filteredApps = applications?.filter(
+  let filteredApps = applications?.filter(
     (app) => 
       app.ies && 
       (!selectedPositionId || selectedPositionId === "" || selectedPositionId === "all" || app.positionId === Number(selectedPositionId))
-  );
+  ) || [];
+
+  // Apply sorting
+  if (sortOrder) {
+    filteredApps = [...filteredApps].sort((a, b) => {
+      const scoreA = Number(a.ies?.actualScore || 0);
+      const scoreB = Number(b.ies?.actualScore || 0);
+      return sortOrder === "asc" ? scoreA - scoreB : scoreB - scoreA;
+    });
+  }
+
+  const toggleSort = () => {
+    setSortOrder((current) => {
+      if (current === null) return "desc";
+      if (current === "desc") return "asc";
+      return null;
+    });
+  };
 
   const handlePrint = () => {
     window.print();
+  };
+
+  const getSortIcon = () => {
+    if (sortOrder === "asc") return <ArrowUp className="w-4 h-4 ml-1" />;
+    if (sortOrder === "desc") return <ArrowDown className="w-4 h-4 ml-1" />;
+    return <ArrowUpDown className="w-4 h-4 ml-1 opacity-50" />;
   };
 
   return (
@@ -131,7 +157,15 @@ export default function AdminAssessments() {
                       <TableHead className="font-semibold text-slate-900 text-center">LET/LPT</TableHead>
                       <TableHead className="font-semibold text-slate-900 text-center">Class Obs</TableHead>
                       <TableHead className="font-semibold text-slate-900 text-center">Non-Class</TableHead>
-                      <TableHead className="font-semibold text-slate-900 text-center">Total Score</TableHead>
+                      <TableHead 
+                        className="font-semibold text-slate-900 text-center cursor-pointer hover:bg-slate-100/50 transition-colors"
+                        onClick={toggleSort}
+                      >
+                        <div className="flex items-center justify-center">
+                          Total Score
+                          {getSortIcon()}
+                        </div>
+                      </TableHead>
                       <TableHead className="font-semibold text-slate-900 text-right">Action</TableHead>
                     </TableRow>
                   </TableHeader>
